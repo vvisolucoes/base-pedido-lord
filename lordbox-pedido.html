@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LordBox · Faça seu Pedido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --wood-light:#F5E6C8;
+  --wood-mid:#C8A96E;
+  --wood-dark:#8B6332;
+  --wood-deep:#5C3D11;
+  --cream:#FAF6EE;
+  --cream2:#F2EAD8;
+  --text:#2C1810;
+  --text-muted:#7A6048;
+  --border:#E0C99A;
+  --white:#FFFFFF;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+/* HERO */
+.hero{background:var(--wood-deep);color:var(--wood-light);padding:0;overflow:hidden;position:relative}
+.hero-inner{max-width:1100px;margin:0 auto;padding:60px 40px;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center}
+.hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--wood-mid);margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:52px;line-height:1.1;font-weight:700;margin-bottom:20px;color:var(--wood-light)}
+.hero h1 em{font-style:italic;color:var(--wood-mid)}
+.hero p{font-size:16px;line-height:1.7;color:rgba(245,230,200,0.7);max-width:480px;margin-bottom:32px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn-hero{padding:14px 28px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero-primary{background:var(--wood-mid);color:var(--wood-deep)}
+.btn-hero-primary:hover{background:var(--wood-light)}
+.btn-hero-outline{background:transparent;border:1px solid rgba(245,230,200,0.25);color:var(--wood-light)}
+.btn-hero-outline:hover{border-color:var(--wood-mid);color:var(--wood-mid)}
+.hero-visual{position:relative}
+.hero-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero-img{background:var(--wood-dark);border-radius:12px;overflow:hidden;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:56px}
+.hero-img:nth-child(2){margin-top:30px}
+.hero-img:nth-child(3){margin-top:-30px}
+.hero-badge{position:absolute;bottom:-10px;right:-20px;background:var(--wood-mid);color:var(--wood-deep);padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;text-align:center}
+.hero-badge strong{display:block;font-size:22px;font-family:'Playfair Display',serif}
+
+/* NAV */
+.topnav{background:rgba(92,61,17,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(200,169,110,0.2)}
+.topnav-inner{max-width:1100px;margin:0 auto;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--wood-light);font-weight:700}
+.nav-links{display:flex;gap:6px}
+.nav-link{padding:7px 14px;border-radius:7px;font-size:13px;color:rgba(245,230,200,0.6);cursor:pointer;transition:all 0.15s;font-weight:400}
+.nav-link:hover,.nav-link.active{background:rgba(200,169,110,0.15);color:var(--wood-light)}
+.nav-cart{background:var(--wood-mid);color:var(--wood-deep);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;border:none;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.nav-cart:hover{background:var(--wood-light)}
+.cart-count{background:var(--wood-deep);color:var(--wood-light);width:20px;height:20px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* SECTIONS */
+.section{max-width:1100px;margin:0 auto;padding:60px 40px}
+.section-head{margin-bottom:40px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.section-head p{color:var(--text-muted);font-size:15px;max-width:500px}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--wood-dark);margin-bottom:10px}
+
+/* CATEGORIES */
+.cats{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap}
+.cat-btn{padding:8px 18px;border-radius:20px;font-size:13px;border:1px solid var(--border);background:var(--white);color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-weight:400}
+.cat-btn:hover,.cat-btn.active{background:var(--wood-deep);color:var(--wood-light);border-color:var(--wood-deep)}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.product-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.2s;cursor:pointer}
+.product-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(92,61,17,0.12)}
+.product-img{height:200px;background:linear-gradient(135deg,var(--wood-light),var(--cream2));display:flex;align-items:center;justify-content:center;font-size:72px;position:relative}
+.product-tag{position:absolute;top:12px;left:12px;background:var(--wood-deep);color:var(--wood-light);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:0.5px}
+.product-body{padding:18px}
+.product-body h3{font-size:15px;font-weight:600;margin-bottom:4px;line-height:1.3}
+.product-body .desc{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:12px}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--wood-dark)}
+.product-price span{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text-muted);font-weight:400;display:block;line-height:1}
+.add-btn{width:36px;height:36px;background:var(--wood-deep);color:var(--wood-light);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background 0.15s}
+.add-btn:hover{background:var(--wood-dark)}
+
+/* HOW IT WORKS */
+.how-section{background:var(--wood-deep);padding:60px 0}
+.how-inner{max-width:1100px;margin:0 auto;padding:0 40px}
+.how-inner h2{font-family:'Playfair Display',serif;font-size:32px;color:var(--wood-light);font-weight:700;margin-bottom:8px;text-align:center}
+.how-inner p{color:rgba(245,230,200,0.6);text-align:center;margin-bottom:40px;font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{text-align:center;padding:24px 16px}
+.step-num{width:48px;height:48px;background:var(--wood-mid);color:var(--wood-deep);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'Playfair Display',serif;margin:0 auto 16px}
+.step h4{color:var(--wood-light);font-size:15px;font-weight:500;margin-bottom:6px}
+.step p{color:rgba(245,230,200,0.5);font-size:13px;line-height:1.5}
+
+/* FORM SECTION */
+.form-section{background:var(--cream2);padding:60px 0}
+.form-inner{max-width:860px;margin:0 auto;padding:0 40px}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:40px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{margin-bottom:0}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border 0.15s;-webkit-appearance:none}
+.form-input:focus{border-color:var(--wood-mid);box-shadow:0 0 0 3px rgba(200,169,110,0.12)}
+select.form-input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6048' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+textarea.form-input{resize:vertical;min-height:90px}
+.form-section-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.form-section-title i{color:var(--wood-dark)}
+.form-divider{height:1px;background:var(--border);margin:24px 0}
+.submit-btn{width:100%;padding:16px;background:var(--wood-deep);color:var(--wood-light);border:none;border-radius:10px;font-size:16px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.submit-btn:hover{background:var(--wood-dark)}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden;height:44px}
+.qty-btn{width:40px;height:100%;background:var(--cream);border:none;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:background 0.12s}
+.qty-btn:hover{background:var(--wood-light);color:var(--wood-dark)}
+.qty-val{flex:1;text-align:center;font-size:15px;font-weight:600;border:none;outline:none;font-family:'DM Sans',sans-serif;background:transparent}
+
+/* CART PANEL */
+.cart-panel{position:fixed;right:-400px;top:0;bottom:0;width:380px;background:var(--white);border-left:1px solid var(--border);z-index:300;transition:right 0.3s ease;overflow-y:auto;display:flex;flex-direction:column}
+.cart-panel.open{right:0}
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:299;display:none}
+.cart-overlay.open{display:block}
+.cart-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white)}
+.cart-header h3{font-size:17px;font-weight:600}
+.close-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:7px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.cart-items{flex:1;padding:16px 24px}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.cart-item-img{width:48px;height:48px;background:var(--wood-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:14px;font-weight:500;line-height:1.3}
+.cart-item-price{font-size:13px;color:var(--text-muted)}
+.cart-item-remove{color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px}
+.cart-footer{padding:20px 24px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;margin-bottom:16px;font-size:16px;font-weight:600}
+.cart-checkout{width:100%;padding:14px;background:var(--wood-deep);color:var(--wood-light);border:none;border-radius:9px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
+.cart-checkout:hover{background:var(--wood-dark)}
+.cart-empty{text-align:center;padding:40px;color:var(--text-muted)}
+.cart-empty i{font-size:48px;margin-bottom:12px;display:block;color:var(--border)}
+
+/* SUCCESS */
+.success-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:400;display:none;align-items:center;justify-content:center}
+.success-overlay.open{display:flex}
+.success-box{background:var(--white);border-radius:16px;padding:48px 40px;text-align:center;width:440px;max-width:90vw}
+.success-icon{width:72px;height:72px;background:var(--success-bg,#D8F3DC);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.success-box h2{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:10px;color:var(--text)}
+.success-box p{color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:24px}
+.success-wpp{background:#25D366;color:white;padding:12px 24px;border-radius:9px;border:none;font-size:15px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif}
+
+/* FOOTER */
+.footer{background:var(--wood-deep);padding:40px;text-align:center}
+.footer-logo{font-family:'Playfair Display',serif;font-size:24px;color:var(--wood-light);margin-bottom:8px}
+.footer p{color:rgba(245,230,200,0.4);font-size:13px}
+.footer-links{display:flex;justify-content:center;gap:20px;margin:16px 0}
+.footer-link{color:rgba(245,230,200,0.5);font-size:13px;cursor:pointer;text-decoration:none}
+.footer-link:hover{color:var(--wood-mid)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr;gap:30px}
+  .hero-visual{display:none}
+  .steps{grid-template-columns:1fr 1fr}
+  .product-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:1}
+  .hero h1{font-size:36px}
+  .section{padding:40px 20px}
+  .hero-inner{padding:40px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <div class="nav-logo">LordBox</div>
+    <div class="nav-links">
+      <span class="nav-link active" onclick="scrollTo('#produtos')">Produtos</span>
+      <span class="nav-link" onclick="scrollTo('#como-funciona')">Como funciona</span>
+      <span class="nav-link" onclick="scrollTo('#pedido')">Fazer pedido</span>
+    </div>
+    <button class="nav-cart" onclick="toggleCart()">
+      <i class="ti ti-shopping-bag"></i> Carrinho
+      <div class="cart-count" id="cart-count">0</div>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Caixas artesanais de madeira</div>
+      <h1>Embalagens que <em>contam histórias</em></h1>
+      <p>Caixas personalizadas para cestas de Natal, café da manhã, lembranças corporativas e muito mais. Produção artesanal com gravação a laser.</p>
+      <div class="hero-cta">
+        <button class="btn-hero btn-hero-primary" onclick="document.getElementById('produtos-section').scrollIntoView({behavior:'smooth'})"><i class="ti ti-box"></i> Ver produtos</button>
+        <button class="btn-hero btn-hero-outline" onclick="document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'})"><i class="ti ti-pencil"></i> Fazer pedido</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-img-grid">
+        <div class="hero-img">🎁</div>
+        <div class="hero-img">🪵</div>
+        <div class="hero-img">🎄</div>
+        <div class="hero-img">☕</div>
+      </div>
+      <div class="hero-badge">
+        <strong>+500</strong>
+        pedidos entregues
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUTOS -->
+<section class="section" id="produtos-section">
+  <div class="section-head">
+    <div class="section-eyebrow">Nosso catálogo</div>
+    <h2>Escolha sua caixa</h2>
+    <p>Todas as caixas podem ser personalizadas com gravação a laser do seu logo ou mensagem.</p>
+  </div>
+  <div class="cats" id="cats">
+    <button class="cat-btn active" onclick="filterCat('todos',this)">Todos</button>
+    <button class="cat-btn" onclick="filterCat('natal',this)">🎄 Cesta de Natal</button>
+    <button class="cat-btn" onclick="filterCat('cafe',this)">☕ Café da Manhã</button>
+    <button class="cat-btn" onclick="filterCat('corp',this)">🏢 Corporativo</button>
+    <button class="cat-btn" onclick="filterCat('presente',this)">🎁 Presente</button>
+  </div>
+  <div class="product-grid" id="product-grid"></div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="how-section" id="como-funciona">
+  <div class="how-inner">
+    <h2>Como funciona</h2>
+    <p>Simples, rápido e direto ao ponto</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Escolha o modelo</h4>
+        <p>Navegue pelo catálogo e selecione a caixa ideal para o seu projeto</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Personalize</h4>
+        <p>Informe logo, mensagem ou gravação que deseja. Enviamos preview antes de produzir</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Confirme o pedido</h4>
+        <p>Preencha o formulário. Entraremos em contato pelo WhatsApp para confirmar</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Receba em casa</h4>
+        <p>Entregamos em toda região ou você pode retirar no atelier em São Caetano do Sul</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM PEDIDO -->
+<section class="form-section" id="pedido-section">
+  <div class="form-inner">
+    <div style="text-align:center;margin-bottom:36px">
+      <div class="section-eyebrow">Faça seu pedido</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin-bottom:8px">Preencha e receba um orçamento</h2>
+      <p style="color:var(--text-muted);font-size:15px">Respondemos em até 2 horas pelo WhatsApp</p>
+    </div>
+    <div class="form-card">
+      <div class="form-section-title"><i class="ti ti-user"></i> Seus dados</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="f-nome" placeholder="Como devemos te chamar?"></div>
+        <div class="form-group"><label class="form-label">WhatsApp *</label><input class="form-input" id="f-wpp" placeholder="(11) 99999-9999"></div>
+        <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="f-email" placeholder="email@exemplo.com"></div>
+        <div class="form-group"><label class="form-label">Tipo de cliente</label>
+          <select class="form-input" id="f-tipo">
+            <option>Pessoa Física</option>
+            <option>Empresa / CNPJ</option>
+          </select></div>
+      </div>
+      <div class="form-divider"></div>
+      <div class="form-section-title"><i class="ti ti-box"></i> Seu pedido</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Produto de interesse *</label>
+          <select class="form-input" id="f-produto">
+            <option value="">Selecione…</option>
+            <option>Caixa Rústica P — R$ 28</option>
+            <option>Caixa Rústica M — R$ 38</option>
+            <option>Caixa Rústica G — R$ 52</option>
+            <option>Caixa Cesta Natal M — R$ 65</option>
+            <option>Caixa Cesta Natal G — R$ 85</option>
+            <option>Caixa Café da Manhã — R$ 72</option>
+            <option>Caixa Corp. Gravada — R$ 95</option>
+            <option>Bandeja Rústica — R$ 45</option>
+            <option>Caixa Tampa Deslizante — R$ 58</option>
+            <option>Caixote Aberto P — R$ 22</option>
+            <option>Outro (descrever)</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Quantidade *</label>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <input class="qty-val" id="f-qtd" value="1" readonly>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div></div>
+        <div class="form-group"><label class="form-label">Data de entrega desejada</label>
+          <input class="form-input" type="date" id="f-data"></div>
+        <div class="form-group"><label class="form-label">Precisa de personalização?</label>
+          <select class="form-input" id="f-custom">
+            <option>Sim, quero gravação a laser</option>
+            <option>Não, caixa sem personalização</option>
+            <option>Não sei ainda</option>
+          </select></div>
+        <div class="form-group full"><label class="form-label">Mensagem / personalização</label>
+          <textarea class="form-input" id="f-msg" placeholder="Descreva sua necessidade: logo, texto para gravação, tamanho especial, cor, acabamento…"></textarea></div>
+      </div>
+      <div class="form-divider"></div>
+      <div style="background:var(--cream);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px">
+        <i class="ti ti-info-circle" style="color:var(--wood-dark);font-size:18px;flex-shrink:0;margin-top:1px"></i>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.5">Após o envio, entraremos em contato pelo WhatsApp para confirmar detalhes, prazo e pagamento. Nenhuma cobrança é feita antes da confirmação.</p>
+      </div>
+      <button class="submit-btn" onclick="submitPedido()">
+        <i class="ti ti-brand-whatsapp"></i> Enviar pedido pelo WhatsApp
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">LordBox</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://www.instagram.com/lordbox.scm/" target="_blank"><i class="ti ti-brand-instagram"></i> @lordbox.scm</a>
+    <span class="footer-link">São Caetano do Sul — SP</span>
+  </div>
+  <p>© 2026 LordBox · Todos os direitos reservados</p>
+</footer>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3>Carrinho</h3>
+    <button class="close-btn" onclick="toggleCart()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total"><span>Total</span><span id="cart-total-val">R$ 0</span></div>
+    <button class="cart-checkout" onclick="goToForm()"><i class="ti ti-pencil"></i> Preencher pedido</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <h2>Pedido enviado!</h2>
+    <p>Recebemos seu pedido e entraremos em contato em até 2 horas pelo WhatsApp para confirmar detalhes e prazo.</p>
+    <button class="success-wpp" onclick="document.getElementById('success-overlay').classList.remove('open')">
+      <i class="ti ti-check"></i> Fechar
+    </button>
+  </div>
+</div>
+
+<script>
+const CATALOG = [
+  {id:1,nome:'Caixa Rústica P',desc:'Perfeita para presentes e lembrancinhas. Dimensões: 20×15×8cm.',preco:28,cat:'presente',emoji:'🎁',tag:'Best-seller'},
+  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦'},
+  {id:3,nome:'Caixa Rústica G',desc:'Para cestas completas e kits especiais. Dimensões: 36×28×12cm.',preco:52,cat:'presente',emoji:'🪵'},
+  {id:4,nome:'Caixa Cesta Natal M',desc:'Formato especial para montar cestas de Natal encantadoras.',preco:65,cat:'natal',emoji:'🎄',tag:'Natal'},
+  {id:5,nome:'Caixa Cesta Natal G',desc:'Ideal para cestas premium e kits de alto valor.',preco:85,cat:'natal',emoji:'✨',tag:'Natal'},
+  {id:6,nome:'Caixa Café da Manhã',desc:'Layout interno para pãezinhos, geleias, frutas e mais.',preco:72,cat:'cafe',emoji:'☕',tag:'Popular'},
+  {id:7,nome:'Caixa Corp. Gravada',desc:'Branding completo com seu logo gravado a laser. Mín. 10 un.',preco:95,cat:'corp',emoji:'🏢',tag:'Empresas'},
+  {id:8,nome:'Bandeja Rústica',desc:'Bandeja aberta com alças. Ideal para organização e presente.',preco:45,cat:'presente',emoji:'🍞'},
+  {id:9,nome:'Caixa Tampa Deslizante',desc:'Fechamento elegante deslizante. Ótima para joias e chocolates.',preco:58,cat:'presente',emoji:'💝'},
+  {id:10,nome:'Caixote Aberto P',desc:'Caixote rústico sem tampa para composições criativas.',preco:22,cat:'presente',emoji:'🌿'},
+];
+
+let cart=[],catAtual='todos';
+
+function filterCat(cat,el){
+  catAtual=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts();
+}
+
+function renderProducts(){
+  const grid=document.getElementById('product-grid');
+  const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
+  grid.innerHTML=data.map(p=>`
+    <div class="product-card" onclick="addToCart(${p.id})">
+      <div class="product-img">${p.emoji}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}</div>
+      <div class="product-body">
+        <h3>${p.nome}</h3>
+        <div class="desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">
+            <span>a partir de</span>
+            R$ ${p.preco}
+          </div>
+          <button class="add-btn" onclick="event.stopPropagation();addToCart(${p.id})"><i class="ti ti-plus" style="font-size:16px"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addToCart(id){
+  const p=CATALOG.find(x=>x.id===id);
+  if(!p)return;
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;
+  else cart.push({...p,qty:1});
+  updateCartUI();
+  const btn=event.currentTarget;
+  if(btn){const orig=btn.innerHTML;btn.innerHTML='<i class="ti ti-check" style="font-size:16px"></i>';setTimeout(()=>btn.innerHTML=orig,600)}
+}
+
+function removeFromCart(id){
+  cart=cart.filter(x=>x.id!==id);
+  updateCartUI();
+}
+
+function updateCartUI(){
+  const count=cart.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('cart-count').textContent=count;
+  const items=document.getElementById('cart-items');
+  if(cart.length===0){
+    items.innerHTML=`<div class="cart-empty"><i class="ti ti-shopping-bag"></i><p>Seu carrinho está vazio.<br>Adicione produtos para começar.</p></div>`;
+    document.getElementById('cart-footer').style.display='none';
+  } else {
+    items.innerHTML=cart.map(x=>`<div class="cart-item">
+      <div class="cart-item-img">${x.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${x.nome}</div>
+        <div class="cart-item-price">R$ ${x.preco} × ${x.qty} = R$ ${x.preco*x.qty}</div>
+      </div>
+      <span class="cart-item-remove" onclick="removeFromCart(${x.id})"><i class="ti ti-x"></i></span>
+    </div>`).join('');
+    const total=cart.reduce((a,x)=>a+x.preco*x.qty,0);
+    document.getElementById('cart-total-val').textContent='R$ '+total.toLocaleString('pt-BR');
+    document.getElementById('cart-footer').style.display='block';
+  }
+}
+
+function toggleCart(){
+  document.getElementById('cart-panel').classList.toggle('open');
+  document.getElementById('cart-overlay').classList.toggle('open');
+}
+
+function goToForm(){
+  toggleCart();
+  if(cart.length>0){
+    const names=cart.map(x=>`${x.qty}x ${x.nome}`).join(', ');
+    document.getElementById('f-msg').value=names+'\n\n';
+  }
+  document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'});
+}
+
+function changeQty(d){
+  const el=document.getElementById('f-qtd');
+  const v=Math.max(1,parseInt(el.value)+d);
+  el.value=v;
+}
+
+function submitPedido(){
+  const nome=document.getElementById('f-nome').value.trim();
+  const wpp=document.getElementById('f-wpp').value.trim();
+  const produto=document.getElementById('f-produto').value;
+  if(!nome||!wpp||!produto){
+    alert('Preencha pelo menos: nome, WhatsApp e produto desejado.');
+    return;
+  }
+  const qtd=document.getElementById('f-qtd').value;
+  const msg=document.getElementById('f-msg').value;
+  const data=document.getElementById('f-data').value;
+  const custom=document.getElementById('f-custom').value;
+  const texto=`Olá! Sou ${nome} e gostaria de fazer um pedido:\n\n📦 Produto: ${produto}\n🔢 Quantidade: ${qtd}\n✍️ Personalização: ${custom}\n📅 Entrega: ${data||'a combinar'}\n\nObservações: ${msg||'—'}`;
+  const encoded=encodeURIComponent(texto);
+  window.open(`https://wa.me/5511999999999?text=${encoded}`,'_blank');
+  document.getElementById('success-overlay').classList.add('open');
+  cart=[];
+  updateCartUI();
+}
+
+function scrollTo(sel){
+  const map={'#produtos':()=>document.getElementById('produtos-section').scrollIntoView({behavior:'smooth'}),'#como-funciona':()=>document.getElementById('como-funciona').scrollIntoView({behavior:'smooth'}),'#pedido':()=>document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'})};
+  map[sel]&&map[sel]();
+}
+
+// Set default date
+const d=new Date();d.setDate(d.getDate()+7);
+document.getElementById('f-data').value=d.toISOString().split('T')[0];
+
+renderProducts();
+updateCartUI();
+</script>
+</body>
+</html>
