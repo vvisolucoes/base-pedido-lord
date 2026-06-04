@@ -176,9 +176,9 @@ textarea.form-input{resize:vertical;min-height:90px}
   <div class="topnav-inner">
     <div class="nav-logo">LordBox</div>
     <div class="nav-links">
-      <span class="nav-link active" onclick="scrollTo('#produtos')">Produtos</span>
-      <span class="nav-link" onclick="scrollTo('#como-funciona')">Como funciona</span>
-      <span class="nav-link" onclick="scrollTo('#pedido')">Fazer pedido</span>
+      <span class="nav-link active" onclick="navTo('#produtos')">Produtos</span>
+      <span class="nav-link" onclick="navTo('#como-funciona')">Como funciona</span>
+      <span class="nav-link" onclick="navTo('#pedido')">Fazer pedido</span>
     </div>
     <button class="nav-cart" onclick="toggleCart()">
       <i class="ti ti-shopping-bag"></i> Carrinho
@@ -455,7 +455,7 @@ function submitPedido(){
   updateCartUI();
 }
 
-function scrollTo(sel){
+function navTo(sel){
   const map={'#produtos':()=>document.getElementById('produtos-section').scrollIntoView({behavior:'smooth'}),'#como-funciona':()=>document.getElementById('como-funciona').scrollIntoView({behavior:'smooth'}),'#pedido':()=>document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'})};
   map[sel]&&map[sel]();
 }
