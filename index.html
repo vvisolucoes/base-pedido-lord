@@ -284,28 +284,7 @@ textarea.form-input{resize:vertical;min-height:90px}
       <div class="form-divider"></div>
       <div class="form-section-title"><i class="ti ti-box"></i> Seu pedido</div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Produto de interesse *</label>
-          <select class="form-input" id="f-produto">
-            <option value="">Selecione…</option>
-            <option>Caixa Rústica P — R$ 28</option>
-            <option>Caixa Rústica M — R$ 38</option>
-            <option>Caixa Rústica G — R$ 52</option>
-            <option>Caixa Cesta Natal M — R$ 65</option>
-            <option>Caixa Cesta Natal G — R$ 85</option>
-            <option>Caixa Café da Manhã — R$ 72</option>
-            <option>Caixa Corp. Gravada — R$ 95</option>
-            <option>Bandeja Rústica — R$ 45</option>
-            <option>Caixa Tampa Deslizante — R$ 58</option>
-            <option>Caixote Aberto P — R$ 22</option>
-            <option>Outro (descrever)</option>
-          </select></div>
-        <div class="form-group"><label class="form-label">Quantidade *</label>
-          <div class="qty-ctrl">
-            <button class="qty-btn" onclick="changeQty(-1)">−</button>
-            <input class="qty-val" id="f-qtd" value="1" readonly>
-            <button class="qty-btn" onclick="changeQty(1)">+</button>
-          </div></div>
-        <div class="form-group"><label class="form-label">Data de entrega desejada</label>
+<div class="form-group"><label class="form-label">Data de entrega desejada</label>
           <input class="form-input" type="date" id="f-data"></div>
         <div class="form-group"><label class="form-label">Precisa de personalização?</label>
           <select class="form-input" id="f-custom">
@@ -459,25 +438,17 @@ function goToForm(){
   document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'});
 }
 
-function changeQty(d){
-  const el=document.getElementById('f-qtd');
-  const v=Math.max(1,parseInt(el.value)+d);
-  el.value=v;
-}
-
 function submitPedido(){
   const nome=document.getElementById('f-nome').value.trim();
   const wpp=document.getElementById('f-wpp').value.trim();
-  const produto=document.getElementById('f-produto').value;
-  if(!nome||!wpp||!produto){
-    alert('Preencha pelo menos: nome, WhatsApp e produto desejado.');
+  if(!nome||!wpp){
+    alert('Preencha pelo menos: nome e WhatsApp.');
     return;
   }
-  const qtd=document.getElementById('f-qtd').value;
   const msg=document.getElementById('f-msg').value;
   const data=document.getElementById('f-data').value;
   const custom=document.getElementById('f-custom').value;
-  const texto=`Olá! Sou ${nome} e gostaria de fazer um pedido:\n\n📦 Produto: ${produto}\n🔢 Quantidade: ${qtd}\n✍️ Personalização: ${custom}\n📅 Entrega: ${data||'a combinar'}\n\nObservações: ${msg||'—'}`;
+  const texto=`Olá! Sou ${nome} e gostaria de fazer um pedido:\n\n✍️ Personalização: ${custom}\n📅 Entrega: ${data||'a combinar'}\n\nObservações: ${msg||'—'}`;
   const encoded=encodeURIComponent(texto);
   window.open(`https://wa.me/5511999999999?text=${encoded}`,'_blank');
   document.getElementById('success-overlay').classList.add('open');
