@@ -174,7 +174,7 @@ textarea.form-input{resize:vertical;min-height:90px}
 <!-- NAV -->
 <nav class="topnav">
   <div class="topnav-inner">
-    <div class="nav-logo">LordBox</div>
+    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">LordBox</div>
     <div class="nav-links">
       <span class="nav-link active" onclick="navTo('#produtos')">Produtos</span>
       <span class="nav-link" onclick="navTo('#como-funciona')">Como funciona</span>
@@ -382,7 +382,7 @@ function renderProducts(){
         <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
           <div class="qty-ctrl" style="height:36px;flex:1">
             <button class="qty-btn" onclick="changeQty(${p.id},-1)" style="width:36px">−</button>
-            <input class="qty-val" id="qty-${p.id}" type="number" value="1" min="1" max="999" readonly style="width:100%;text-align:center">
+            <input class="qty-val" id="qty-${p.id}" type="number" min="1" max="999" placeholder="Qtd" style="width:100%;text-align:center">
             <button class="qty-btn" onclick="changeQty(${p.id},1)" style="width:36px">+</button>
           </div>
           <button class="add-btn" onclick="addToCart(${p.id})" style="flex-shrink:0"><i class="ti ti-shopping-bag" style="font-size:16px"></i></button>
@@ -394,8 +394,9 @@ function renderProducts(){
 function changeQty(id,delta){
   const input=document.getElementById('qty-'+id);
   if(!input)return;
-  const val=Math.max(1,parseInt(input.value||1)+delta);
-  input.value=val;
+  const current=parseInt(input.value)||0;
+  const next=current+delta;
+  input.value=next>=1?next:'';
 }
 
 function addToCart(id){
