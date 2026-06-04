@@ -368,7 +368,7 @@ function renderProducts(){
   const grid=document.getElementById('product-grid');
   const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
   grid.innerHTML=data.map(p=>`
-    <div class="product-card" onclick="addToCart(${p.id})">
+    <div class="product-card">
       <div class="product-img">${p.emoji}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}</div>
       <div class="product-body">
         <h3>${p.nome}</h3>
@@ -378,18 +378,35 @@ function renderProducts(){
             <span>a partir de</span>
             R$ ${p.preco}
           </div>
-          <button class="add-btn" onclick="event.stopPropagation();addToCart(${p.id})"><i class="ti ti-plus" style="font-size:16px"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <div class="qty-ctrl" style="height:36px;flex:1">
+            <button class="qty-btn" onclick="changeQty(${p.id},-1)" style="width:36px">−</button>
+            <input class="qty-val" id="qty-${p.id}" type="number" value="1" min="1" max="999" readonly style="width:100%;text-align:center">
+            <button class="qty-btn" onclick="changeQty(${p.id},1)" style="width:36px">+</button>
+          </div>
+          <button class="add-btn" onclick="addToCart(${p.id})" style="flex-shrink:0"><i class="ti ti-shopping-bag" style="font-size:16px"></i></button>
         </div>
       </div>
     </div>`).join('');
 }
 
+function changeQty(id,delta){
+  const input=document.getElementById('qty-'+id);
+  if(!input)return;
+  const val=Math.max(1,parseInt(input.value||1)+delta);
+  input.value=val;
+}
+
 function addToCart(id){
   const p=CATALOG.find(x=>x.id===id);
   if(!p)return;
+  const qtyInput=document.getElementById('qty-'+id);
+  const qty=qtyInput?Math.max(1,parseInt(qtyInput.value)||1):1;
   const ex=cart.find(x=>x.id===id);
-  if(ex)ex.qty++;
-  else cart.push({...p,qty:1});
+  if(ex)ex.qty+=qty;
+  else cart.push({...p,qty});
+  if(qtyInput)qtyInput.value=1;
   updateCartUI();
   const btn=event.currentTarget;
   if(btn){const orig=btn.innerHTML;btn.innerHTML='<i class="ti ti-check" style="font-size:16px"></i>';setTimeout(()=>btn.innerHTML=orig,600)}
