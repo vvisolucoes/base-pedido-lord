@@ -470,7 +470,7 @@ function submitPedido(){
   const custom=document.getElementById('f-custom').value;
   const texto=`Olá! Sou ${nome} e gostaria de fazer um pedido:\n\n✍️ Personalização: ${custom}\n📅 Entrega: ${data||'a combinar'}\n\nProdutos/Detalhes: ${msg||'—'}${obs?'\n\nObservações: '+obs:''}`;
   const encoded=encodeURIComponent(texto);
-  window.open(`https://wa.me/5511999999999?text=${encoded}`,'_blank');
+  window.open(`https://wa.me/5511971596568?text=${encoded}`,'_blank');
   document.getElementById('success-overlay').classList.add('open');
   cart=[];
   updateCartUI();
