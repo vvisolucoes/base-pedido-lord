@@ -104,6 +104,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .form-label{font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:6px;display:block}
 .form-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border 0.15s;-webkit-appearance:none}
 .form-input:focus{border-color:var(--wood-mid);box-shadow:0 0 0 3px rgba(200,169,110,0.12)}
+.form-input.input-error{border-color:#C0392B;box-shadow:0 0 0 3px rgba(192,57,43,0.12)}
+.field-error{font-size:12px;color:#C0392B;margin-top:5px;display:none}
+.field-error.show{display:block}
 select.form-input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6048' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 textarea.form-input{resize:vertical;min-height:90px}
 .form-section-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px}
@@ -273,7 +276,7 @@ textarea.form-input{resize:vertical;min-height:90px}
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Nome completo / Nome da empresa *</label><input class="form-input" id="f-nome" placeholder="Como devemos te chamar?"></div>
         <div class="form-group"><label class="form-label">WhatsApp *</label><input class="form-input" id="f-wpp" placeholder="(11) 97159-6568"></div>
-        <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="f-email" placeholder="email@exemplo.com"></div>
+        <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="f-email" placeholder="email@exemplo.com" onblur="validateEmail()" oninput="clearEmailError()"><span class="field-error" id="f-email-error">E-mail inválido. Use o formato: email@exemplo.com</span></div>
         <div class="form-group"><label class="form-label">Tipo de cliente</label>
           <select class="form-input" id="f-tipo">
             <option>Pessoa Física</option>
@@ -462,6 +465,10 @@ function submitPedido(){
     alert('Preencha pelo menos: nome e WhatsApp.');
     return;
   }
+  if(!validateEmail()){
+    document.getElementById('f-email').focus();
+    return;
+  }
   const msg=document.getElementById('f-msg').value;
   const obs=document.getElementById('f-obs').value.trim();
   const custom=document.getElementById('f-custom').value;
@@ -471,6 +478,21 @@ function submitPedido(){
   document.getElementById('success-overlay').classList.add('open');
   cart=[];
   updateCartUI();
+}
+
+function validateEmail(){
+  const input=document.getElementById('f-email');
+  const val=input.value.trim();
+  const err=document.getElementById('f-email-error');
+  if(val===''){input.classList.remove('input-error');err.classList.remove('show');return true;}
+  const valid=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+  if(!valid){input.classList.add('input-error');err.classList.add('show');return false;}
+  input.classList.remove('input-error');err.classList.remove('show');return true;
+}
+function clearEmailError(){
+  const input=document.getElementById('f-email');
+  input.classList.remove('input-error');
+  document.getElementById('f-email-error').classList.remove('show');
 }
 
 function navTo(sel){
