@@ -159,6 +159,27 @@ textarea.form-input{resize:vertical;min-height:90px}
 .footer-link{color:rgba(245,230,200,0.5);font-size:13px;cursor:pointer;text-decoration:none}
 .footer-link:hover{color:var(--wood-mid)}
 
+/* LIGHTBOX */
+.product-img{cursor:zoom-in}
+.zoom-hint{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.48);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0;transition:opacity 0.2s;pointer-events:none}
+.product-card:hover .zoom-hint{opacity:1}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.open{display:flex}
+.lb-box{background:var(--white);border-radius:16px;overflow:hidden;max-width:560px;width:100%;max-height:92vh;display:flex;flex-direction:column;position:relative;animation:lb-in 0.2s ease}
+@keyframes lb-in{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+.lb-img{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,var(--wood-light),var(--cream2));display:flex;align-items:center;justify-content:center;font-size:120px;position:relative;overflow:hidden;flex-shrink:0}
+.lb-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.lb-info{padding:24px 28px 28px}
+.lb-info h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:6px}
+.lb-info .lb-desc{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+.lb-footer{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lb-price-wrap span{font-size:12px;color:var(--text-muted);display:block;line-height:1}
+.lb-price{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--wood-dark)}
+.lb-add{background:var(--wood-deep);color:var(--wood-light);border:none;border-radius:9px;padding:12px 20px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'DM Sans',sans-serif;transition:background 0.15s}
+.lb-add:hover{background:var(--wood-dark)}
+.lb-close{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;z-index:10;transition:background 0.15s}
+.lb-close:hover{background:rgba(0,0,0,0.75)}
+
 /* RESPONSIVE */
 @media(max-width:768px){
   .hero-inner{grid-template-columns:1fr;gap:30px}
@@ -333,6 +354,27 @@ textarea.form-input{resize:vertical;min-height:90px}
   </div>
 </div>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <div class="lb-box">
+    <button class="lb-close" onclick="closeLightbox()"><i class="ti ti-x"></i></button>
+    <div class="lb-img" id="lb-img"></div>
+    <div class="lb-info">
+      <h3 id="lb-name"></h3>
+      <div class="lb-desc" id="lb-desc"></div>
+      <div class="lb-footer">
+        <div class="lb-price-wrap">
+          <span>a partir de</span>
+          <div class="lb-price" id="lb-price"></div>
+        </div>
+        <button class="lb-add" id="lb-add-btn" onclick="addFromLightbox()">
+          <i class="ti ti-shopping-bag" style="font-size:15px"></i> Adicionar ao carrinho
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SUCCESS -->
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
@@ -359,7 +401,7 @@ const CATALOG = [
   {id:10,nome:'Caixote Aberto P',desc:'Caixote rústico sem tampa para composições criativas.',preco:22,cat:'presente',emoji:'🌿'},
 ];
 
-let cart=[],catAtual='todos';
+let cart=[],catAtual='todos',lightboxId=null;
 
 function filterCat(cat,el){
   catAtual=cat;
@@ -373,7 +415,7 @@ function renderProducts(){
   const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
   grid.innerHTML=data.map(p=>`
     <div class="product-card">
-      <div class="product-img">${p.img?`<img src="${p.img}" alt="${p.nome}" loading="lazy">`:''}${!p.img?p.emoji:''}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}</div>
+      <div class="product-img" onclick="openLightbox(${p.id})">${p.img?`<img src="${p.img}" alt="${p.nome}" loading="lazy">`:''}${!p.img?p.emoji:''}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
       <div class="product-body">
         <h3>${p.nome}</h3>
         <div class="desc">${p.desc}</div>
@@ -499,6 +541,38 @@ function navTo(sel){
   const map={'#produtos':()=>document.getElementById('produtos-section').scrollIntoView({behavior:'smooth'}),'#como-funciona':()=>document.getElementById('como-funciona').scrollIntoView({behavior:'smooth'}),'#pedido':()=>document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'})};
   map[sel]&&map[sel]();
 }
+
+function openLightbox(id){
+  const p=CATALOG.find(x=>x.id===id);
+  if(!p)return;
+  lightboxId=id;
+  document.getElementById('lb-img').innerHTML=(p.img?`<img src="${p.img}" alt="${p.nome}">`:'')+(p.img?'':`<span>${p.emoji}</span>`)+(p.tag?`<div class="product-tag">${p.tag}</div>`:'');
+  document.getElementById('lb-name').textContent=p.nome;
+  document.getElementById('lb-desc').textContent=p.desc;
+  document.getElementById('lb-price').textContent=`R$ ${p.preco}`;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+  lightboxId=null;
+}
+function addFromLightbox(){
+  if(lightboxId===null)return;
+  const id=lightboxId;
+  const p=CATALOG.find(x=>x.id===id);
+  if(!p)return;
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty+=1;
+  else cart.push({...p,qty:1});
+  updateCartUI();
+  const btn=document.getElementById('lb-add-btn');
+  const orig=btn.innerHTML;
+  btn.innerHTML='<i class="ti ti-check" style="font-size:15px"></i> Adicionado!';
+  setTimeout(()=>btn.innerHTML=orig,800);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
 
 renderProducts();
 updateCartUI();
