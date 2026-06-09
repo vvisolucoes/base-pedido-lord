@@ -73,6 +73,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(92,61,17,0.12)}
 .product-img{aspect-ratio:3/2;background:linear-gradient(135deg,var(--wood-light),var(--cream2));display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;overflow:hidden}
 .product-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.product-img img.img-contain{object-fit:contain;background:var(--cream2)}
 .product-tag{position:absolute;top:12px;left:12px;background:var(--wood-deep);color:var(--wood-light);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:0.5px}
 .product-body{padding:18px}
 .product-body h3{font-size:15px;font-weight:600;margin-bottom:4px;line-height:1.3}
@@ -390,7 +391,7 @@ textarea.form-input{resize:vertical;min-height:90px}
 <script>
 const CATALOG = [
   {id:1,nome:'Caixa Rústica P',desc:'Perfeita para presentes e lembrancinhas. Dimensões: 20×15×8cm.',preco:28,cat:'presente',emoji:'🎁',tag:'Best-seller',img:'caixa-rustica-p.jpg'},
-  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦',img:'caixa-rustica-m.jpg'},
+  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦',img:'caixa-rustica-m.jpg',imgContain:true},
   {id:3,nome:'Caixa Rústica G',desc:'Para cestas completas e kits especiais. Dimensões: 36×28×12cm.',preco:52,cat:'presente',emoji:'🪵'},
   {id:4,nome:'Caixa Cesta Natal M',desc:'Formato especial para montar cestas de Natal encantadoras.',preco:65,cat:'natal',emoji:'🎄',tag:'Natal'},
   {id:5,nome:'Caixa Cesta Natal G',desc:'Ideal para cestas premium e kits de alto valor.',preco:85,cat:'natal',emoji:'✨',tag:'Natal'},
@@ -415,7 +416,7 @@ function renderProducts(){
   const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
   grid.innerHTML=data.map(p=>`
     <div class="product-card">
-      <div class="product-img" onclick="openLightbox(${p.id})">${p.img?`<img src="${p.img}" alt="${p.nome}" loading="lazy">`:''}${!p.img?p.emoji:''}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
+      <div class="product-img" onclick="openLightbox(${p.id})">${p.img?`<img src="${p.img}" alt="${p.nome}" loading="lazy"${p.imgContain?' class="img-contain"':''}>`:''}${!p.img?p.emoji:''}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
       <div class="product-body">
         <h3>${p.nome}</h3>
         <div class="desc">${p.desc}</div>
@@ -546,7 +547,7 @@ function openLightbox(id){
   const p=CATALOG.find(x=>x.id===id);
   if(!p)return;
   lightboxId=id;
-  document.getElementById('lb-img').innerHTML=(p.img?`<img src="${p.img}" alt="${p.nome}">`:'')+(p.img?'':`<span>${p.emoji}</span>`)+(p.tag?`<div class="product-tag">${p.tag}</div>`:'');
+  document.getElementById('lb-img').innerHTML=(p.img?`<img src="${p.img}" alt="${p.nome}"${p.imgContain?' style="object-fit:contain;background:var(--cream2)"':''}>`:'')+(p.img?'':`<span>${p.emoji}</span>`)+(p.tag?`<div class="product-tag">${p.tag}</div>`:'');
   document.getElementById('lb-name').textContent=p.nome;
   document.getElementById('lb-desc').textContent=p.desc;
   document.getElementById('lb-price').textContent=`R$ ${p.preco}`;
