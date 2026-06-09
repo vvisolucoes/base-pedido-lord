@@ -179,6 +179,19 @@ textarea.form-input{resize:vertical;min-height:90px}
 .lb-close{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;z-index:10;transition:background 0.15s}
 .lb-close:hover{background:rgba(0,0,0,0.75)}
 
+/* LIGHTBOX CAROUSEL */
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.45);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:6;transition:background 0.15s}
+.lb-nav:hover{background:rgba(0,0,0,0.7)}
+.lb-nav:disabled{opacity:0.3;cursor:default;pointer-events:none}
+.lb-prev{left:10px}
+.lb-next{right:10px}
+.lb-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:6;pointer-events:none}
+.lb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.45);border:none;cursor:pointer;padding:0;transition:all 0.15s;flex-shrink:0;pointer-events:all}
+.lb-dot.active{background:#fff;transform:scale(1.25)}
+.lb-counter{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.45);color:#fff;font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;z-index:6;white-space:nowrap}
+@keyframes lb-fade{from{opacity:0}to{opacity:1}}
+.lb-img img,.lb-img>span{animation:lb-fade 0.18s ease}
+
 /* RESPONSIVE */
 @media(max-width:768px){
   /* nav */
@@ -431,8 +444,8 @@ textarea.form-input{resize:vertical;min-height:90px}
 
 <script>
 const CATALOG = [
-  {id:1,nome:'Caixa Rústica P',desc:'Perfeita para presentes e lembrancinhas. Dimensões: 20×15×8cm.',preco:28,cat:'presente',emoji:'🎁',tag:'Best-seller',img:'caixa-rustica-p.jpg'},
-  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦',img:'caixa-rustica-m.jpg',imgContain:true},
+  {id:1,nome:'Caixa Rústica P',desc:'Perfeita para presentes e lembrancinhas. Dimensões: 20×15×8cm.',preco:28,cat:'presente',emoji:'🎁',tag:'Best-seller',img:'caixa-rustica-p.jpg',imgs:['caixa-rustica-p.jpg','https://picsum.photos/seed/lordbox2/800/533']},
+  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦',img:'caixa-rustica-m.jpg',imgContain:true,imgs:['caixa-rustica-m.jpg']},
   {id:3,nome:'Caixa Rústica G',desc:'Para cestas completas e kits especiais. Dimensões: 36×28×12cm.',preco:52,cat:'presente',emoji:'🪵'},
   {id:4,nome:'Caixa Cesta Natal M',desc:'Formato especial para montar cestas de Natal encantadoras.',preco:65,cat:'natal',emoji:'🎄',tag:'Natal'},
   {id:5,nome:'Caixa Cesta Natal G',desc:'Ideal para cestas premium e kits de alto valor.',preco:85,cat:'natal',emoji:'✨',tag:'Natal'},
@@ -443,7 +456,7 @@ const CATALOG = [
   {id:10,nome:'Caixote Aberto P',desc:'Caixote rústico sem tampa para composições criativas.',preco:22,cat:'presente',emoji:'🌿'},
 ];
 
-let cart=[],catAtual='todos',lightboxId=null;
+let cart=[],catAtual='todos',lightboxId=null,lbSlide=0,lbImgs=[];
 
 function filterCat(cat,el){
   catAtual=cat;
@@ -457,7 +470,7 @@ function renderProducts(){
   const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
   grid.innerHTML=data.map(p=>`
     <div class="product-card">
-      <div class="product-img" onclick="openLightbox(${p.id})">${p.img?`<img src="${p.img}" alt="${p.nome}" loading="lazy"${p.imgContain?' class="img-contain"':''}>`:''}${!p.img?p.emoji:''}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
+      <div class="product-img" onclick="openLightbox(${p.id})">${(()=>{const t=p.img||(p.imgs&&p.imgs[0]);return t?`<img src="${t}" alt="${p.nome}" loading="lazy"${p.imgContain?' class="img-contain"':''}>`:p.emoji})()}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
       <div class="product-body">
         <h3>${p.nome}</h3>
         <div class="desc">${p.desc}</div>
@@ -588,20 +601,74 @@ function openLightbox(id){
   const p=CATALOG.find(x=>x.id===id);
   if(!p)return;
   lightboxId=id;
-  document.getElementById('lb-img').innerHTML=(p.img?`<img src="${p.img}" alt="${p.nome}"${p.imgContain?' style="object-fit:contain;background:var(--cream2)"':''}>`:'')+(p.img?'':`<span>${p.emoji}</span>`)+(p.tag?`<div class="product-tag">${p.tag}</div>`:'');
+  lbSlide=0;
+  lbImgs=(p.imgs?p.imgs:(p.img?[p.img]:[])).map(x=>typeof x==='string'?{src:x,contain:!!p.imgContain}:x);
+  renderLbSlide(p);
   document.getElementById('lb-name').textContent=p.nome;
   document.getElementById('lb-desc').textContent=p.desc;
   document.getElementById('lb-price').textContent=`R$ ${p.preco}`;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow='hidden';
 }
+
+function renderLbSlide(p){
+  const el=document.getElementById('lb-img');
+  const entry=lbImgs[lbSlide];
+  const src=entry?entry.src:null;
+  const contain=entry&&entry.contain?' style="object-fit:contain;background:var(--cream2)"':'';
+  let h=src?`<img src="${src}" alt="${p.nome}"${contain}>`:`<span>${p.emoji}</span>`;
+  if(p.tag) h+=`<div class="product-tag">${p.tag}</div>`;
+  if(lbImgs.length>1){
+    h+=`<button class="lb-nav lb-prev" onclick="lbGo(-1)"${lbSlide===0?' disabled':''}><i class="ti ti-chevron-left"></i></button>`;
+    h+=`<button class="lb-nav lb-next" onclick="lbGo(1)"${lbSlide===lbImgs.length-1?' disabled':''}><i class="ti ti-chevron-right"></i></button>`;
+    h+=`<div class="lb-dots">${lbImgs.map((_,i)=>`<button class="lb-dot${i===lbSlide?' active':''}" onclick="lbGoTo(${i})"></button>`).join('')}</div>`;
+    h+=`<div class="lb-counter">${lbSlide+1} / ${lbImgs.length}</div>`;
+  }
+  el.innerHTML=h;
+}
+
+function lbGo(dir){
+  const p=CATALOG.find(x=>x.id===lightboxId);
+  if(!p)return;
+  const next=lbSlide+dir;
+  if(next<0||next>=lbImgs.length)return;
+  lbSlide=next;
+  renderLbSlide(p);
+}
+
+function lbGoTo(i){
+  const p=CATALOG.find(x=>x.id===lightboxId);
+  if(!p)return;
+  lbSlide=i;
+  renderLbSlide(p);
+}
+
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow='';
   lightboxId=null;
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeLightbox();
+  if(document.getElementById('lightbox').classList.contains('open')){
+    if(e.key==='ArrowLeft')lbGo(-1);
+    if(e.key==='ArrowRight')lbGo(1);
+  }
+});
+
+// Swipe no mobile
+let lbTouchX=null;
+document.getElementById('lb-img') && document.addEventListener('touchstart',e=>{
+  if(document.getElementById('lightbox').classList.contains('open'))
+    lbTouchX=e.touches[0].clientX;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(lbTouchX===null)return;
+  const diff=lbTouchX-e.changedTouches[0].clientX;
+  if(Math.abs(diff)>45)lbGo(diff>0?1:-1);
+  lbTouchX=null;
+});
 
 renderProducts();
 updateCartUI();
