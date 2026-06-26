@@ -116,6 +116,11 @@ textarea.form-input{resize:vertical;min-height:90px}
 .form-divider{height:1px;background:var(--border);margin:24px 0}
 .submit-btn{width:100%;padding:16px;background:var(--wood-deep);color:var(--wood-light);border:none;border-radius:10px;font-size:16px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
 .submit-btn:hover{background:var(--wood-dark)}
+.alca-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.alca-label{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.alca-opts{display:flex;border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--cream)}
+.alca-opt{padding:5px 13px;font-size:12px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;font-weight:400;line-height:1.4}
+.alca-opt.active{background:var(--wood-deep);color:var(--wood-light)}
 .qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden;height:44px}
 .qty-btn{width:40px;height:100%;background:var(--cream);border:none;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:background 0.12s}
 .qty-btn:hover{background:var(--wood-light);color:var(--wood-dark)}
@@ -444,19 +449,31 @@ textarea.form-input{resize:vertical;min-height:90px}
 
 <script>
 const CATALOG = [
-  {id:1,nome:'Caixa Rústica P',desc:'Perfeita para presentes e lembrancinhas. Dimensões: 20×15×8cm.',preco:28,cat:'presente',emoji:'🎁',tag:'Best-seller',img:'caixa-rustica-p.jpg',imgs:['caixa-rustica-p.jpg','https://picsum.photos/seed/lordbox2/800/533']},
-  {id:2,nome:'Caixa Rústica M',desc:'Versatilidade para diferentes ocasiões. Dimensões: 28×20×10cm.',preco:38,cat:'presente',emoji:'📦',img:'caixa-rustica-m.jpg',imgContain:true,imgs:['caixa-rustica-m.jpg']},
-  {id:3,nome:'Caixa Rústica G',desc:'Para cestas completas e kits especiais. Dimensões: 36×28×12cm.',preco:52,cat:'presente',emoji:'🪵'},
-  {id:4,nome:'Caixa Cesta Natal M',desc:'Formato especial para montar cestas de Natal encantadoras.',preco:65,cat:'natal',emoji:'🎄',tag:'Natal'},
-  {id:5,nome:'Caixa Cesta Natal G',desc:'Ideal para cestas premium e kits de alto valor.',preco:85,cat:'natal',emoji:'✨',tag:'Natal'},
-  {id:6,nome:'Caixa Café da Manhã',desc:'Layout interno para pãezinhos, geleias, frutas e mais.',preco:72,cat:'cafe',emoji:'☕',tag:'Popular'},
-  {id:7,nome:'Caixa Corp. Gravada',desc:'Branding completo com seu logo gravado a laser. Mín. 10 un.',preco:95,cat:'corp',emoji:'🏢',tag:'Empresas'},
-  {id:8,nome:'Bandeja Rústica',desc:'Bandeja aberta com alças. Ideal para organização e presente.',preco:45,cat:'presente',emoji:'🍞'},
-  {id:9,nome:'Caixa Tampa Deslizante',desc:'Fechamento elegante deslizante. Ótima para joias e chocolates.',preco:58,cat:'presente',emoji:'💝'},
-  {id:10,nome:'Caixote Aberto P',desc:'Caixote rústico sem tampa para composições criativas.',preco:22,cat:'presente',emoji:'🌿'},
+  {id:1,nome:'Caixa Rústica',cat:'presente',emoji:'🎁',tag:'Best-seller',img:'caixa-rustica-p.jpg',imgs:['caixa-rustica-p.jpg','https://picsum.photos/seed/lordbox2/800/533'],temAlca:true,
+    tamanhos:[
+      {tam:'P',desc:'Perfeita para presentes e lembrancinhas.',dims:'20×15×8cm',preco:28},
+      {tam:'M',desc:'Versatilidade para diferentes ocasiões.',dims:'28×20×10cm',preco:38},
+      {tam:'G',desc:'Para cestas completas e kits especiais.',dims:'36×28×12cm',preco:52},
+      {tam:'GG',desc:'Para grandes composições e kits premium.',dims:'44×34×14cm',preco:68},
+    ]},
+  {id:2,nome:'Caixa Cesta Natal',cat:'natal',emoji:'🎄',tag:'Natal',temAlca:true,
+    tamanhos:[
+      {tam:'M',desc:'Formato especial para montar cestas de Natal encantadoras.',dims:null,preco:65},
+      {tam:'G',desc:'Ideal para cestas premium e kits de alto valor.',dims:null,preco:85},
+    ]},
+  {id:3,nome:'Caixa Café da Manhã',desc:'Layout interno para pãezinhos, geleias, frutas e mais.',preco:72,cat:'cafe',emoji:'☕',tag:'Popular',temAlca:true},
+  {id:4,nome:'Caixa Corp. Gravada',desc:'Branding completo com seu logo gravado a laser. Mín. 10 un.',preco:95,cat:'corp',emoji:'🏢',tag:'Empresas',temAlca:true},
+  {id:5,nome:'Bandeja Rústica',desc:'Bandeja aberta com alças. Ideal para organização e presente.',preco:45,cat:'presente',emoji:'🍞'},
+  {id:6,nome:'Caixa Tampa Deslizante',desc:'Fechamento elegante deslizante. Ótima para joias e chocolates.',preco:58,cat:'presente',emoji:'💝',temAlca:true},
+  {id:7,nome:'Caixote Aberto',cat:'presente',emoji:'🌿',temAlca:true,
+    tamanhos:[
+      {tam:'P',desc:'Caixote rústico sem tampa para composições criativas.',dims:'20×15×8cm',preco:22},
+      {tam:'M',desc:'Caixote médio para composições maiores.',dims:'28×20×10cm',preco:32},
+      {tam:'G',desc:'Caixote grande para cestas e kits completos.',dims:'36×28×12cm',preco:45},
+    ]},
 ];
 
-let cart=[],catAtual='todos',lightboxId=null,lbSlide=0,lbImgs=[];
+let cart=[],catAtual='todos',lightboxId=null,lbSlide=0,lbImgs=[],cartUid=0;
 
 function filterCat(cat,el){
   catAtual=cat;
@@ -468,18 +485,24 @@ function filterCat(cat,el){
 function renderProducts(){
   const grid=document.getElementById('product-grid');
   const data=catAtual==='todos'?CATALOG:CATALOG.filter(p=>p.cat===catAtual);
-  grid.innerHTML=data.map(p=>`
+  grid.innerHTML=data.map(p=>{
+    const ft=p.tamanhos?p.tamanhos[0]:null;
+    const desc=ft?(ft.desc+(ft.dims?' Dimensões: '+ft.dims+'.':'')):(p.desc||'');
+    const preco=ft?ft.preco:p.preco;
+    return `
     <div class="product-card">
       <div class="product-img" onclick="openLightbox(${p.id})">${(()=>{const t=p.img||(p.imgs&&p.imgs[0]);return t?`<img src="${t}" alt="${p.nome}" loading="lazy"${p.imgContain?' class="img-contain"':''}>`:p.emoji})()}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}<div class="zoom-hint"><i class="ti ti-zoom-in"></i></div></div>
       <div class="product-body">
         <h3>${p.nome}</h3>
-        <div class="desc">${p.desc}</div>
+        <div class="desc" id="desc-${p.id}">${desc}</div>
         <div class="product-footer">
           <div class="product-price">
             <span>a partir de</span>
-            R$ ${p.preco}
+            <span id="price-${p.id}">R$ ${preco}</span>
           </div>
         </div>
+        ${p.tamanhos?`<div class="alca-row" style="margin-top:10px"><span class="alca-label">Tamanho:</span><div class="alca-opts">${p.tamanhos.map((t,i)=>`<button class="alca-opt${i===0?' active':''}" id="tam-${p.id}-${t.tam}" onclick="setTamanho(${p.id},'${t.tam}')">${t.tam}</button>`).join('')}</div></div>`:''}
+        ${p.temAlca?`<div class="alca-row"><span class="alca-label">Alça:</span><div class="alca-opts"><button class="alca-opt active" id="alca-sem-${p.id}" onclick="setAlca(${p.id},false)">Sem alça</button><button class="alca-opt" id="alca-com-${p.id}" onclick="setAlca(${p.id},true)">Com alça</button></div></div>`:''}
         <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
           <div class="qty-ctrl" style="height:36px;flex:1">
             <button class="qty-btn" onclick="changeQty(${p.id},-1)" style="width:36px">−</button>
@@ -497,7 +520,26 @@ function renderProducts(){
           </div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+function setAlca(id, comAlca){
+  const sem=document.getElementById('alca-sem-'+id);
+  const com=document.getElementById('alca-com-'+id);
+  if(sem&&com){sem.classList.toggle('active',!comAlca);com.classList.toggle('active',comAlca);}
+}
+
+function setTamanho(id, tam){
+  const p=CATALOG.find(x=>x.id===id);
+  if(!p||!p.tamanhos)return;
+  const t=p.tamanhos.find(x=>x.tam===tam);
+  if(!t)return;
+  p.tamanhos.forEach(x=>{const btn=document.getElementById('tam-'+id+'-'+x.tam);if(btn)btn.classList.toggle('active',x.tam===tam);});
+  const descEl=document.getElementById('desc-'+id);
+  if(descEl)descEl.textContent=t.desc+(t.dims?' Dimensões: '+t.dims+'.':'');
+  const priceEl=document.getElementById('price-'+id);
+  if(priceEl)priceEl.textContent='R$ '+t.preco;
 }
 
 function toggleDim(id){
@@ -522,21 +564,29 @@ function addToCart(id){
   if(!p)return;
   const qtyInput=document.getElementById('qty-'+id);
   const qty=qtyInput?Math.max(1,parseInt(qtyInput.value)||1):1;
+  let preco=p.preco||0;
+  let tamanho=null;
+  if(p.tamanhos){
+    const at=p.tamanhos.find(t=>{const btn=document.getElementById('tam-'+id+'-'+t.tam);return btn&&btn.classList.contains('active');});
+    if(at){preco=at.preco;tamanho=at.tam;}
+  }
   const c=document.getElementById('dim-c-'+id)?.value.trim();
   const a=document.getElementById('dim-a-'+id)?.value.trim();
   const l=document.getElementById('dim-l-'+id)?.value.trim();
   const medidas=(c||a||l)?{c,a,l}:null;
-  const ex=cart.find(x=>x.id===id);
-  if(ex){ex.qty+=qty;if(medidas)ex.medidas=medidas;}
-  else cart.push({...p,qty,medidas});
+  const alcaComBtn=document.getElementById('alca-com-'+id);
+  const alca=p.temAlca?(alcaComBtn?.classList.contains('active')?'com':'sem'):null;
+  const ex=cart.find(x=>x.id===id&&x.tamanho===tamanho);
+  if(ex){ex.qty+=qty;if(medidas)ex.medidas=medidas;if(alca!==null)ex.alca=alca;}
+  else cart.push({...p,preco,qty,medidas,alca,tamanho,uid:++cartUid});
   if(qtyInput)qtyInput.value=1;
   updateCartUI();
   const btn=event.currentTarget;
   if(btn){const orig=btn.innerHTML;btn.innerHTML='<i class="ti ti-check" style="font-size:16px"></i>';setTimeout(()=>btn.innerHTML=orig,600)}
 }
 
-function removeFromCart(id){
-  cart=cart.filter(x=>x.id!==id);
+function removeFromCart(uid){
+  cart=cart.filter(x=>x.uid!==uid);
   updateCartUI();
 }
 
@@ -551,11 +601,12 @@ function updateCartUI(){
     items.innerHTML=cart.map(x=>`<div class="cart-item">
       <div class="cart-item-img">${x.emoji}</div>
       <div class="cart-item-info">
-        <div class="cart-item-name">${x.nome}</div>
+        <div class="cart-item-name">${x.nome}${x.tamanho?' '+x.tamanho:''}</div>
         <div class="cart-item-price">R$ ${x.preco} × ${x.qty} = R$ ${x.preco*x.qty}</div>
+        ${x.alca?`<div style="font-size:11px;color:var(--wood-dark);margin-top:3px"><i class="ti ti-link" style="font-size:11px"></i> ${x.alca==='com'?'Com alça':'Sem alça'}</div>`:''}
         ${x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)?`<div style="font-size:11px;color:var(--wood-dark);margin-top:3px"><i class="ti ti-ruler-2" style="font-size:11px"></i> ${[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × ')}</div>`:''}
       </div>
-      <span class="cart-item-remove" onclick="removeFromCart(${x.id})"><i class="ti ti-x"></i></span>
+      <span class="cart-item-remove" onclick="removeFromCart(${x.uid})"><i class="ti ti-x"></i></span>
     </div>`).join('');
     const total=cart.reduce((a,x)=>a+x.preco*x.qty,0);
     document.getElementById('cart-total-val').textContent='R$ '+total.toLocaleString('pt-BR');
@@ -572,7 +623,8 @@ function goToForm(){
   toggleCart();
   if(cart.length>0){
     const names=cart.map(x=>{
-      let s=`${x.qty}x ${x.nome}`;
+      let s=`${x.qty}x ${x.nome}${x.tamanho?' '+x.tamanho:''}`;
+      if(x.alca)s+=` (${x.alca==='com'?'com alça':'sem alça'})`;
       if(x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)){
         const dims=[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × ');
         s+=` [${dims}]`;
