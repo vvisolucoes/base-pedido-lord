@@ -488,8 +488,25 @@ function renderProducts(){
           </div>
           <button class="add-btn" onclick="addToCart(${p.id})" style="flex-shrink:0"><i class="ti ti-shopping-bag" style="font-size:16px"></i></button>
         </div>
+        <div style="margin-top:10px">
+          <button onclick="toggleDim(${p.id})" id="dim-toggle-${p.id}" style="background:none;border:none;font-size:12px;color:var(--wood-dark);cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;font-family:'DM Sans',sans-serif"><i class="ti ti-ruler-2" style="font-size:13px"></i> Medidas personalizadas</button>
+          <div id="dim-${p.id}" style="display:none;margin-top:8px;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Comprimento</div><input id="dim-c-${p.id}" type="number" min="1" placeholder="cm" style="border:1px solid var(--border);border-radius:6px;padding:5px 4px;font-size:13px;width:100%;text-align:center;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);background:var(--cream)"></div>
+            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Altura</div><input id="dim-a-${p.id}" type="number" min="1" placeholder="cm" style="border:1px solid var(--border);border-radius:6px;padding:5px 4px;font-size:13px;width:100%;text-align:center;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);background:var(--cream)"></div>
+            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Largura</div><input id="dim-l-${p.id}" type="number" min="1" placeholder="cm" style="border:1px solid var(--border);border-radius:6px;padding:5px 4px;font-size:13px;width:100%;text-align:center;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);background:var(--cream)"></div>
+          </div>
+        </div>
       </div>
     </div>`).join('');
+}
+
+function toggleDim(id){
+  const d=document.getElementById('dim-'+id);
+  if(!d)return;
+  const open=d.style.display==='none'||d.style.display==='';
+  d.style.display=open?'grid':'none';
+  const btn=document.getElementById('dim-toggle-'+id);
+  if(btn)btn.style.color=open?'var(--wood-deep)':'var(--wood-dark)';
 }
 
 function changeQty(id,delta){
@@ -505,9 +522,13 @@ function addToCart(id){
   if(!p)return;
   const qtyInput=document.getElementById('qty-'+id);
   const qty=qtyInput?Math.max(1,parseInt(qtyInput.value)||1):1;
+  const c=document.getElementById('dim-c-'+id)?.value.trim();
+  const a=document.getElementById('dim-a-'+id)?.value.trim();
+  const l=document.getElementById('dim-l-'+id)?.value.trim();
+  const medidas=(c||a||l)?{c,a,l}:null;
   const ex=cart.find(x=>x.id===id);
-  if(ex)ex.qty+=qty;
-  else cart.push({...p,qty});
+  if(ex){ex.qty+=qty;if(medidas)ex.medidas=medidas;}
+  else cart.push({...p,qty,medidas});
   if(qtyInput)qtyInput.value=1;
   updateCartUI();
   const btn=event.currentTarget;
@@ -532,6 +553,7 @@ function updateCartUI(){
       <div class="cart-item-info">
         <div class="cart-item-name">${x.nome}</div>
         <div class="cart-item-price">R$ ${x.preco} × ${x.qty} = R$ ${x.preco*x.qty}</div>
+        ${x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)?`<div style="font-size:11px;color:var(--wood-dark);margin-top:3px"><i class="ti ti-ruler-2" style="font-size:11px"></i> ${[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × ')}</div>`:''}
       </div>
       <span class="cart-item-remove" onclick="removeFromCart(${x.id})"><i class="ti ti-x"></i></span>
     </div>`).join('');
@@ -549,7 +571,14 @@ function toggleCart(){
 function goToForm(){
   toggleCart();
   if(cart.length>0){
-    const names=cart.map(x=>`${x.qty}x ${x.nome}`).join(', ');
+    const names=cart.map(x=>{
+      let s=`${x.qty}x ${x.nome}`;
+      if(x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)){
+        const dims=[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × ');
+        s+=` [${dims}]`;
+      }
+      return s;
+    }).join(', ');
     document.getElementById('f-msg').value=names+'\n\n';
   }
   document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'});
