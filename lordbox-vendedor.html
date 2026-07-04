@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LordBox · Painel do Vendedor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --wood-light:#F5E6C8;
+  --wood-mid:#C8A96E;
+  --wood-dark:#8B6332;
+  --wood-deep:#5C3D11;
+  --cream:#FAF6EE;
+  --text:#2C1810;
+  --text-muted:#7A6048;
+  --border:#E0C99A;
+  --surface:#FFFFFF;
+  --success:#2D6A4F;
+  --success-bg:#D8F3DC;
+  --warning:#B5451B;
+  --warning-bg:#FFF3E0;
+  --danger:#C62828;
+  --danger-bg:#FFEBEE;
+  --info:#1565C0;
+  --info-bg:#E3F2FD;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--wood-deep);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Playfair Display',serif;color:var(--wood-light);font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.topbar-logo span{font-size:12px;font-weight:300;color:var(--wood-mid);letter-spacing:1px;font-family:'DM Sans',sans-serif}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-badge{background:rgba(255,255,255,0.08);color:var(--wood-light);padding:6px 14px;border-radius:20px;font-size:13px;display:flex;align-items:center;gap:6px}
+.topbar-badge i{font-size:15px;color:var(--wood-mid)}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.btn-light{background:rgba(255,255,255,0.12);color:var(--wood-light);border:1px solid rgba(255,255,255,0.15)}
+.btn-light:hover{background:rgba(255,255,255,0.2)}
+.btn-primary{background:var(--wood-mid);color:var(--wood-deep)}
+.btn-primary:hover{background:var(--wood-light)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #FFCDD2}
+.btn-danger:hover{background:#FFCDD2}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* CONTENT */
+.content{max-width:1200px;margin:0 auto;padding:28px 32px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between}
+.mc-left .mc-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.mc-left .mc-value{font-size:26px;font-weight:700;font-family:'Playfair Display',serif;color:var(--text);line-height:1}
+.mc-left .mc-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.mc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mc-icon.amber{background:#FFF3E0;color:#E65100}
+.mc-icon.green{background:var(--success-bg);color:var(--success)}
+.mc-icon.blue{background:var(--info-bg);color:var(--info)}
+.mc-icon.red{background:var(--danger-bg);color:var(--danger)}
+
+/* FILTERS */
+.filters-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.tabs{display:inline-flex;gap:4px;background:var(--surface);padding:5px;border-radius:10px;border:1px solid var(--border)}
+.tab{padding:7px 16px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--text-muted);transition:all 0.15s}
+.tab.active{background:var(--wood-deep);color:var(--wood-light);font-weight:500}
+.tab .tab-count{display:inline-flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.1);width:18px;height:18px;border-radius:50%;font-size:10px;margin-left:4px}
+.tab.active .tab-count{background:rgba(255,255,255,0.2)}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;width:240px}
+.search-bar input{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;width:100%}
+.search-bar i{color:var(--text-muted);font-size:15px}
+.filters-right{display:flex;gap:8px;align-items:center}
+
+/* PEDIDOS LIST */
+.pedidos-list{display:flex;flex-direction:column;gap:12px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.empty-state i{font-size:48px;margin-bottom:12px;display:block;color:var(--border)}
+.empty-state h3{font-size:16px;margin-bottom:6px;color:var(--text)}
+.empty-state p{font-size:14px}
+
+/* PEDIDO CARD */
+.pedido-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow 0.15s}
+.pedido-card:hover{box-shadow:0 4px 20px rgba(92,61,17,0.08)}
+.pedido-card.novo{border-left:4px solid var(--wood-mid)}
+.pedido-card.urgente{border-left:4px solid var(--danger)}
+.pc-header{padding:14px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none}
+.pc-num{font-size:13px;font-weight:600;color:var(--wood-dark);min-width:64px}
+.pc-client{flex:1}
+.pc-client-name{font-size:15px;font-weight:500;color:var(--text)}
+.pc-client-wpp{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;margin-top:1px}
+.pc-meta{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.pc-date{font-size:12px;color:var(--text-muted);text-align:right}
+.pc-total{font-size:16px;font-weight:700;font-family:'Playfair Display',serif;color:var(--wood-dark)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-novo{background:#FFF3E0;color:#E65100}
+.badge-producao{background:var(--info-bg);color:var(--info)}
+.badge-pronto{background:var(--success-bg);color:var(--success)}
+.badge-entregue{background:#F5F5F5;color:#666}
+.badge-cancelado{background:var(--danger-bg);color:var(--danger)}
+.chevron{font-size:18px;color:var(--text-muted);transition:transform 0.2s;margin-left:4px}
+.pedido-card.open .chevron{transform:rotate(180deg)}
+
+/* PEDIDO DETAILS (collapsible) */
+.pc-body{display:none;border-top:1px solid var(--border)}
+.pedido-card.open .pc-body{display:block}
+.pc-body-inner{padding:20px;display:grid;grid-template-columns:1fr 280px;gap:20px}
+.pc-items h4{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
+.item-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.item-row:last-child{border-bottom:none}
+.item-emoji{width:36px;height:36px;background:var(--wood-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.item-name{flex:1;font-size:14px;font-weight:500}
+.item-detail{font-size:12px;color:var(--text-muted)}
+.item-qty{font-size:13px;font-weight:600;color:var(--text-muted);min-width:40px;text-align:center}
+.item-price{font-size:14px;font-weight:600;color:var(--text);min-width:80px;text-align:right}
+.pc-obs{background:var(--cream);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:var(--text-muted);line-height:1.5}
+.pc-obs strong{color:var(--text);display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* SIDEBAR do pedido */
+.pc-sidebar{}
+.pc-sidebar h4{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
+.pc-info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pc-info-row:last-child{border-bottom:none}
+.pc-info-row span{color:var(--text-muted)}
+.pc-info-row strong{color:var(--text);text-align:right;max-width:160px}
+.pc-total-row{display:flex;justify-content:space-between;padding:12px 0 0;font-size:16px;font-weight:700;font-family:'Playfair Display',serif}
+.pc-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.pc-actions .btn{justify-content:center;width:100%}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-muted)}
+.btn-outline:hover{border-color:var(--wood-mid);color:var(--wood-dark)}
+.btn-whatsapp{background:#25D366;color:white;border:none}
+.btn-whatsapp:hover{background:#128C7E}
+.status-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;cursor:pointer}
+.status-select:focus{border-color:var(--wood-mid)}
+
+/* PRINT AREA */
+@media print {
+  .topbar,.filters-row,.pc-actions,.tabs,.btn,.search-bar,.notif,.metrics,.modal-overlay,
+  .pedido-card:not(.printing) { display:none !important }
+  .pedido-card.printing { display:block !important; box-shadow:none; border:none }
+  .pedido-card.printing .pc-body { display:block !important }
+  .print-header { display:block !important }
+  body { background:white }
+  .pc-header { cursor:default }
+  .chevron { display:none }
+  .content { padding:0 }
+  .pedido-card.printing .pc-body-inner { grid-template-columns:1fr }
+  .pc-sidebar { border-top:1px solid #eee; padding-top:12px; margin-top:12px }
+}
+.print-header{display:none;text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--wood-mid)}
+.print-header h1{font-family:'Playfair Display',serif;font-size:28px;color:var(--wood-deep)}
+.print-header p{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;width:480px;max-height:80vh;overflow-y:auto}
+.modal-header{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:17px;font-weight:600;font-family:'Playfair Display',serif}
+.icon-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.modal-body{padding:22px 26px}
+.modal-footer{padding:14px 26px 22px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border)}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:0.5px}
+.form-input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border 0.15s}
+.form-input:focus{border-color:var(--wood-mid)}
+
+/* NOTIF */
+.notif{position:fixed;bottom:24px;right:24px;background:var(--wood-deep);color:var(--wood-light);padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all 0.3s;display:flex;align-items:center;gap:8px;max-width:320px}
+.notif.show{transform:translateY(0);opacity:1}
+
+/* INSTRUCOES */
+.instrucoes{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start}
+.instrucoes i{font-size:24px;color:var(--wood-mid);flex-shrink:0;margin-top:2px}
+.instrucoes h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.instrucoes p{font-size:13px;color:var(--text-muted);line-height:1.5}
+.instrucoes code{background:var(--cream);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--wood-dark);font-family:monospace}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    LordBox <span>Painel do Vendedor</span>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-badge"><i class="ti ti-circle-filled" id="status-dot" style="color:#4CAF50;font-size:10px"></i> <span id="status-label">Ao vivo</span></div>
+    <button class="btn btn-light btn-sm" onclick="openModal('modalConfig')"><i class="ti ti-settings"></i> Configurar</button>
+    <button class="btn btn-primary btn-sm" onclick="adicionarPedidoDemo()"><i class="ti ti-plus"></i> Simular pedido</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- INSTRUCOES (só aparece na 1ª vez) -->
+  <div class="instrucoes" id="instrucoes-box">
+    <i class="ti ti-info-circle"></i>
+    <div>
+      <h3>Como conectar com a página de pedidos</h3>
+      <p>Esta página lê automaticamente os pedidos salvos pela página do cliente no mesmo domínio. Para funcionar, ambas as páginas precisam estar no <strong>mesmo domínio</strong> (ex: <code>vvisolucoes.github.io</code>). Os pedidos chegam em tempo real — esta página verifica a cada 10 segundos. <a href="#" onclick="document.getElementById('instrucoes-box').style.display='none';return false" style="color:var(--wood-dark)">Entendi, fechar</a></p>
+    </div>
+  </div>
+
+  <!-- MÉTRICAS -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="mc-left">
+        <div class="mc-label">Novos hoje</div>
+        <div class="mc-value" id="m-novos">0</div>
+        <div class="mc-sub">pedidos recebidos</div>
+      </div>
+      <div class="mc-icon amber"><i class="ti ti-bell"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-left">
+        <div class="mc-label">Em produção</div>
+        <div class="mc-value" id="m-prod">0</div>
+        <div class="mc-sub">itens em andamento</div>
+      </div>
+      <div class="mc-icon blue"><i class="ti ti-hammer"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-left">
+        <div class="mc-label">Prontos p/ entrega</div>
+        <div class="mc-value" id="m-pronto">0</div>
+        <div class="mc-sub">aguardando retirada</div>
+      </div>
+      <div class="mc-icon green"><i class="ti ti-package"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-left">
+        <div class="mc-label">Receita pendente</div>
+        <div class="mc-value" id="m-receita">R$ 0</div>
+        <div class="mc-sub">pedidos abertos</div>
+      </div>
+      <div class="mc-icon red"><i class="ti ti-currency-dollar"></i></div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters-row">
+    <div class="tabs" id="status-tabs">
+      <div class="tab active" data-status="todos" onclick="setFiltro('todos',this)">Todos <span class="tab-count" id="cnt-todos">0</span></div>
+      <div class="tab" data-status="novo" onclick="setFiltro('novo',this)">Novos <span class="tab-count" id="cnt-novo">0</span></div>
+      <div class="tab" data-status="producao" onclick="setFiltro('producao',this)">Produção <span class="tab-count" id="cnt-producao">0</span></div>
+      <div class="tab" data-status="pronto" onclick="setFiltro('pronto',this)">Prontos <span class="tab-count" id="cnt-pronto">0</span></div>
+      <div class="tab" data-status="entregue" onclick="setFiltro('entregue',this)">Entregues <span class="tab-count" id="cnt-entregue">0</span></div>
+    </div>
+    <div class="filters-right">
+      <div class="search-bar"><i class="ti ti-search"></i><input type="text" id="search-input" placeholder="Buscar por nome ou pedido…" oninput="renderPedidos()"></div>
+      <button class="btn btn-outline btn-sm" onclick="limparTodos()" style="font-size:12px"><i class="ti ti-trash"></i> Limpar</button>
+    </div>
+  </div>
+
+  <!-- LISTA -->
+  <div class="pedidos-list" id="pedidos-list"></div>
+
+</div>
+
+<!-- MODAL CONFIG -->
+<div class="modal-overlay" id="modalConfig">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Configurações</h2>
+      <button class="icon-btn" onclick="closeModal('modalConfig')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Chave de armazenamento (deve ser igual na página de pedidos)</label>
+        <input class="form-input" id="cfg-chave" placeholder="lordbox_pedidos">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Seu número WhatsApp (para confirmações)</label>
+        <input class="form-input" id="cfg-wpp" placeholder="5511999999999">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome do atendente / empresa</label>
+        <input class="form-input" id="cfg-nome" placeholder="LordBox">
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-top:4px">A chave de armazenamento deve ser a mesma configurada na página de pedidos do cliente (<code style="font-family:monospace;background:var(--cream);padding:1px 5px;border-radius:3px">localStorage.setItem('<strong>lordbox_pedidos</strong>', ...)</code>).</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalConfig')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT HEADER (só aparece no print) -->
+<div class="print-header" id="print-header">
+  <h1>LordBox</h1>
+  <p>Comprovante de Pedido · Emitido em <span id="print-date"></span></p>
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notif"><i class="ti ti-check"></i> <span id="notif-msg">OK</span></div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+const CFG_KEY = 'lordbox_vendedor_cfg';
+const DEFAULT_STORAGE_KEY = 'lordbox_pedidos';
+
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; }
+}
+function getStorageKey() {
+  return getConfig().chave || DEFAULT_STORAGE_KEY;
+}
+
+function salvarConfig() {
+  const cfg = {
+    chave: document.getElementById('cfg-chave').value.trim() || DEFAULT_STORAGE_KEY,
+    wpp: document.getElementById('cfg-wpp').value.trim(),
+    nome: document.getElementById('cfg-nome').value.trim() || 'LordBox'
+  };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  closeModal('modalConfig');
+  notify('Configurações salvas!');
+  renderPedidos();
+}
+
+// ─── STORAGE ───────────────────────────────────────────────────────────────
+function getPedidos() {
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function savePedidos(arr) {
+  localStorage.setItem(getStorageKey(), JSON.stringify(arr));
+}
+
+function updateStatus(id, novoStatus) {
+  const arr = getPedidos();
+  const p = arr.find(x => x.id === id);
+  if (p) {
+    p.status = novoStatus;
+    p.statusAtualizado = new Date().toISOString();
+    savePedidos(arr);
+    renderPedidos();
+    notify('Status atualizado: ' + labelStatus(novoStatus));
+  }
+}
+
+// ─── ESTADO ────────────────────────────────────────────────────────────────
+let filtroAtual = 'todos';
+let ultimaContagem = 0;
+let pedidoAberto = null;
+
+// ─── FILTROS E RENDER ──────────────────────────────────────────────────────
+function setFiltro(status, el) {
+  filtroAtual = status;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderPedidos();
+}
+
+function labelStatus(s) {
+  return {novo:'Novo',producao:'Em produção',pronto:'Pronto',entregue:'Entregue',cancelado:'Cancelado'}[s] || s;
+}
+function badgeStatus(s) {
+  const map = {novo:'badge-novo',producao:'badge-producao',pronto:'badge-pronto',entregue:'badge-entregue',cancelado:'badge-cancelado'};
+  return `<span class="badge ${map[s]||'badge-novo'}">${labelStatus(s)}</span>`;
+}
+
+function renderPedidos() {
+  const todos = getPedidos();
+  const q = (document.getElementById('search-input')?.value||'').toLowerCase();
+
+  // counts
+  const counts = {todos:0,novo:0,producao:0,pronto:0,entregue:0,cancelado:0};
+  todos.forEach(p => { counts.todos++; counts[p.status] = (counts[p.status]||0)+1; });
+  Object.keys(counts).forEach(k => {
+    const el = document.getElementById('cnt-'+k);
+    if (el) el.textContent = counts[k];
+  });
+
+  // metrics
+  document.getElementById('m-novos').textContent = counts.novo || 0;
+  document.getElementById('m-prod').textContent = counts.producao || 0;
+  document.getElementById('m-pronto').textContent = counts.pronto || 0;
+  const recPend = todos.filter(p=>p.status!=='entregue'&&p.status!=='cancelado').reduce((a,p)=>a+(p.total||0),0);
+  document.getElementById('m-receita').textContent = 'R$ '+recPend.toLocaleString('pt-BR',{minimumFractionDigits:0});
+
+  // filter
+  let lista = todos.filter(p => {
+    const matchStatus = filtroAtual==='todos' || p.status===filtroAtual;
+    const matchQ = !q || (p.clienteNome||'').toLowerCase().includes(q) || (p.id||'').toLowerCase().includes(q) || (p.clienteWpp||'').includes(q);
+    return matchStatus && matchQ;
+  }).sort((a,b) => new Date(b.criadoEm||0) - new Date(a.criadoEm||0));
+
+  const container = document.getElementById('pedidos-list');
+  if (lista.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <i class="ti ti-clipboard-x"></i>
+      <h3>Nenhum pedido encontrado</h3>
+      <p>${todos.length===0?'Quando um cliente finalizar um pedido, ele aparecerá aqui automaticamente.':'Tente ajustar o filtro ou a busca.'}</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = lista.map(p => buildCard(p)).join('');
+
+  // re-open card if was open
+  if (pedidoAberto) {
+    const card = document.getElementById('card-'+pedidoAberto);
+    if (card) card.classList.add('open');
+  }
+
+  // check new arrivals
+  if (todos.length > ultimaContagem && ultimaContagem > 0) {
+    const diff = todos.length - ultimaContagem;
+    notify(`${diff} novo${diff>1?'s':''} pedido${diff>1?'s':''} recebido${diff>1?'s':''}! 🎉`);
+  }
+  ultimaContagem = todos.length;
+}
+
+function buildCard(p) {
+  const itens = p.itens || [];
+  const dt = p.criadoEm ? new Date(p.criadoEm).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+  const entrega = p.dataEntrega || '—';
+  const total = p.total || itens.reduce((a,x)=>a+(x.preco||0)*(x.qty||1),0);
+
+  const itensHtml = itens.length > 0
+    ? itens.map(it => `
+        <div class="item-row">
+          <div class="item-emoji">${it.emoji||'📦'}</div>
+          <div style="flex:1">
+            <div class="item-name">${it.nome||it.name||'—'}</div>
+            <div class="item-detail">${it.personalizacao||it.customText||''}</div>
+          </div>
+          <div class="item-qty">${it.qty||it.quantidade||1}×</div>
+          <div class="item-price">R$ ${((it.preco||0)*(it.qty||1)).toLocaleString('pt-BR')}</div>
+        </div>`).join('')
+    : '<div style="font-size:13px;color:var(--text-muted);padding:8px 0">Nenhum item detalhado</div>';
+
+  const cfg = getConfig();
+  const msgWpp = encodeURIComponent(`Olá ${p.clienteNome||''}! 👋\n\nSeu pedido *#${p.id}* foi recebido pela LordBox!\n\nEntraremos em contato em breve para confirmar detalhes e prazo de entrega.\n\nObrigado pela preferência! 🪵`);
+  const wppNum = (p.clienteWpp||'').replace(/\D/g,'');
+  const wppLink = wppNum ? `https://wa.me/55${wppNum}?text=${msgWpp}` : null;
+
+  return `
+  <div class="pedido-card ${p.status==='novo'?'novo':''}" id="card-${p.id}">
+    <div class="pc-header" onclick="toggleCard('${p.id}')">
+      <div class="pc-num">#${p.id}</div>
+      <div class="pc-client">
+        <div class="pc-client-name">${p.clienteNome||'Cliente'}</div>
+        <div class="pc-client-wpp"><i class="ti ti-brand-whatsapp" style="font-size:12px;color:#25D366"></i> ${p.clienteWpp||'—'} · ${p.clienteTipo||'Pessoa Física'}</div>
+      </div>
+      <div class="pc-meta">
+        ${badgeStatus(p.status)}
+        <div class="pc-date">Recebido<br>${dt}</div>
+        <div class="pc-total">R$ ${(total||0).toLocaleString('pt-BR',{minimumFractionDigits:0})}</div>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-body-inner">
+        <div class="pc-items">
+          <h4><i class="ti ti-box" style="font-size:14px;vertical-align:-2px"></i> Itens do pedido</h4>
+          ${itensHtml}
+          <div class="pc-total-row">
+            <span>Total</span>
+            <span>R$ ${(total||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+          </div>
+          ${p.observacoes ? `<div class="pc-obs"><strong>Observações / personalização</strong>${p.observacoes}</div>` : ''}
+          ${p.personalizacao && !p.observacoes ? `<div class="pc-obs"><strong>Personalização</strong>${p.personalizacao}</div>` : ''}
+        </div>
+        <div class="pc-sidebar">
+          <h4><i class="ti ti-user" style="font-size:14px;vertical-align:-2px"></i> Informações</h4>
+          <div class="pc-info-row"><span>Cliente</span><strong>${p.clienteNome||'—'}</strong></div>
+          <div class="pc-info-row"><span>WhatsApp</span><strong>${p.clienteWpp||'—'}</strong></div>
+          <div class="pc-info-row"><span>E-mail</span><strong>${p.clienteEmail||'—'}</strong></div>
+          <div class="pc-info-row"><span>Tipo</span><strong>${p.clienteTipo||'—'}</strong></div>
+          <div class="pc-info-row"><span>Personalização</span><strong>${p.precisaPersonalizacao||'—'}</strong></div>
+          <div class="pc-info-row"><span>Entrega desejada</span><strong>${entrega}</strong></div>
+          <div class="pc-info-row"><span>Recebido em</span><strong>${dt}</strong></div>
+
+          <div class="pc-actions">
+            <div>
+              <div class="form-label" style="margin-bottom:5px">Atualizar status</div>
+              <select class="status-select" onchange="updateStatus('${p.id}',this.value)">
+                <option value="novo" ${p.status==='novo'?'selected':''}>Novo</option>
+                <option value="producao" ${p.status==='producao'?'selected':''}>Em produção</option>
+                <option value="pronto" ${p.status==='pronto'?'selected':''}>Pronto</option>
+                <option value="entregue" ${p.status==='entregue'?'selected':''}>Entregue</option>
+                <option value="cancelado" ${p.status==='cancelado'?'selected':''}>Cancelado</option>
+              </select>
+            </div>
+            ${wppLink ? `<a href="${wppLink}" target="_blank" class="btn btn-whatsapp"><i class="ti ti-brand-whatsapp"></i> Confirmar pelo WhatsApp</a>` : ''}
+            <button class="btn btn-outline" onclick="imprimirPedido('${p.id}')"><i class="ti ti-printer"></i> Imprimir pedido</button>
+            <button class="btn btn-danger btn-sm" onclick="excluirPedido('${p.id}')"><i class="ti ti-trash"></i> Excluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-'+id);
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.pedido-card').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) { card.classList.add('open'); pedidoAberto = id; }
+  else { pedidoAberto = null; }
+}
+
+// ─── IMPRESSÃO ─────────────────────────────────────────────────────────────
+function imprimirPedido(id) {
+  document.querySelectorAll('.pedido-card').forEach(c => c.classList.remove('printing','open'));
+  const card = document.getElementById('card-'+id);
+  card.classList.add('printing','open');
+  document.getElementById('print-date').textContent = new Date().toLocaleString('pt-BR');
+  setTimeout(() => { window.print(); card.classList.remove('printing'); }, 100);
+}
+
+// ─── AÇÕES ─────────────────────────────────────────────────────────────────
+function excluirPedido(id) {
+  if (!confirm('Remover este pedido do painel? Esta ação não pode ser desfeita.')) return;
+  const arr = getPedidos().filter(p => p.id !== id);
+  savePedidos(arr);
+  renderPedidos();
+  notify('Pedido removido.');
+}
+
+function limparTodos() {
+  if (!confirm('Limpar TODOS os pedidos? Isso não pode ser desfeito.')) return;
+  savePedidos([]);
+  renderPedidos();
+  notify('Todos os pedidos foram removidos.');
+}
+
+// ─── DEMO ──────────────────────────────────────────────────────────────────
+let demoCounter = 1;
+const nomes = ['Fernanda Oliveira','Bruna Santos','Lemon Presentes','Doce Momento','Ana Lima','Carlos Menezes'];
+const produtos = [
+  {nome:'Caixa Rústica M',emoji:'📦',preco:38},
+  {nome:'Caixa Cesta Natal G',emoji:'🎄',preco:85},
+  {nome:'Caixa Café da Manhã',emoji:'☕',preco:72},
+  {nome:'Caixa Corp. Gravada',emoji:'🏢',preco:95},
+  {nome:'Bandeja Rústica',emoji:'🍞',preco:45},
+];
+
+function adicionarPedidoDemo() {
+  const arr = getPedidos();
+  const prod = produtos[Math.floor(Math.random()*produtos.length)];
+  const qty = Math.ceil(Math.random()*5);
+  const nome = nomes[Math.floor(Math.random()*nomes.length)];
+  const pedido = {
+    id: 'LB'+String(Date.now()).slice(-5),
+    clienteNome: nome,
+    clienteWpp: '(11)9'+Math.floor(Math.random()*9000+1000)+'-'+Math.floor(Math.random()*9000+1000),
+    clienteEmail: nome.split(' ')[0].toLowerCase()+'@email.com',
+    clienteTipo: Math.random()>0.5?'Empresa':'Pessoa Física',
+    status: 'novo',
+    criadoEm: new Date().toISOString(),
+    dataEntrega: '',
+    precisaPersonalizacao: Math.random()>0.5?'Sim, gravação a laser':'Não',
+    observacoes: Math.random()>0.6?'Logo da empresa + mensagem personalizada na tampa':'',
+    itens: [{...prod, qty}],
+    total: prod.preco * qty
+  };
+  arr.push(pedido);
+  savePedidos(arr);
+  renderPedidos();
+  notify(`Novo pedido simulado de ${nome}!`);
+}
+
+// ─── MODAL ─────────────────────────────────────────────────────────────────
+function openModal(id) {
+  if (id === 'modalConfig') {
+    const cfg = getConfig();
+    document.getElementById('cfg-chave').value = cfg.chave || DEFAULT_STORAGE_KEY;
+    document.getElementById('cfg-wpp').value = cfg.wpp || '';
+    document.getElementById('cfg-nome').value = cfg.nome || '';
+  }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+
+// ─── NOTIF ─────────────────────────────────────────────────────────────────
+function notify(msg) {
+  const n = document.getElementById('notif');
+  document.getElementById('notif-msg').textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+// ─── AUTO REFRESH ──────────────────────────────────────────────────────────
+// Polls localStorage every 10s — catches updates from the client page
+// if both pages are open in the same browser (same origin)
+setInterval(() => {
+  const arr = getPedidos();
+  if (arr.length !== ultimaContagem) renderPedidos();
+}, 10000);
+
+// ─── INIT ──────────────────────────────────────────────────────────────────
+renderPedidos();
+</script>
+</body>
+</html>
