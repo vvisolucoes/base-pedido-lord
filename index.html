@@ -803,7 +803,7 @@ function submitPedido(){
   const obs=document.getElementById('f-obs').value.trim();
   const custom=document.getElementById('f-custom').value;
   salvarPedidoVendedor({nome,wpp,email,tipo,custom,msg,obs,cart:[...cart]});
-  const texto=`🔔 *Novo pedido recebido pelo site*\n\n*Dados do cliente*\nNome: ${nome}\nWhatsApp: ${wpp}\nE-mail: ${email||'Não informado'}\nTipo de cliente: ${tipo}\n\nOs detalhes completos do pedido (itens, valores e observações) já estão disponíveis na plataforma.`;
+  const texto=`*Novo pedido recebido pelo site*\n\n*Dados do cliente*\nNome: ${nome}\nWhatsApp: ${wpp}\nE-mail: ${email||'Não informado'}\nTipo de cliente: ${tipo}\n\nOs detalhes completos do pedido (itens, valores e observações) já estão disponíveis na plataforma.`;
   const encoded=encodeURIComponent(texto);
   window.open(`https://wa.me/5511998184282?text=${encoded}`,'_blank');
   document.getElementById('success-overlay').classList.add('open');
