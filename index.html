@@ -387,6 +387,20 @@ textarea.form-input{resize:vertical;min-height:90px}
             <option>Pessoa Física</option>
             <option>Empresa / CNPJ</option>
           </select></div>
+        <div class="form-group full">
+          <label class="form-label">Logo da sua loja (opcional)</label>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div id="logo-preview-wrap" style="display:none;width:56px;height:56px;border-radius:6px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;background:var(--cream)">
+              <img id="logo-preview" style="width:100%;height:100%;object-fit:contain">
+            </div>
+            <label for="f-logo" class="custom-btn" style="margin-top:0;width:auto;padding:9px 16px;cursor:pointer">
+              <i class="ti ti-upload"></i> <span id="logo-btn-label">Escolher imagem</span>
+            </label>
+            <input type="file" id="f-logo" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+            <span id="logo-remove" onclick="removeLogo()" style="display:none;font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:underline">remover</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Envie o logo da sua marca para avaliarmos a gravação a laser na caixa. Formatos aceitos: PNG, JPG.</p>
+        </div>
       </div>
       <div class="form-divider"></div>
       <div class="form-section-title"><i class="ti ti-box"></i> Seu pedido</div>
@@ -521,7 +535,45 @@ const CATALOG = [
     ]},
 ];
 
-let cart=[],catAtual='todos',lightboxId=null,lbSlide=0,lbImgs=[],cartUid=0;
+let cart=[],catAtual='todos',lightboxId=null,lbSlide=0,lbImgs=[],cartUid=0,logoDataUrl=null;
+
+function handleLogoUpload(input){
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){
+    alert('Selecione um arquivo de imagem válido.');
+    input.value='';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxSize=400;
+      let width=img.width,height=img.height;
+      if(width>height&&width>maxSize){height=Math.round(height*(maxSize/width));width=maxSize;}
+      else if(height>maxSize){width=Math.round(width*(maxSize/height));height=maxSize;}
+      const canvas=document.createElement('canvas');
+      canvas.width=width;canvas.height=height;
+      canvas.getContext('2d').drawImage(img,0,0,width,height);
+      logoDataUrl=canvas.toDataURL('image/jpeg',0.8);
+      document.getElementById('logo-preview').src=logoDataUrl;
+      document.getElementById('logo-preview-wrap').style.display='block';
+      document.getElementById('logo-btn-label').textContent='Trocar imagem';
+      document.getElementById('logo-remove').style.display='inline';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo(){
+  logoDataUrl=null;
+  document.getElementById('f-logo').value='';
+  document.getElementById('logo-preview-wrap').style.display='none';
+  document.getElementById('logo-btn-label').textContent='Escolher imagem';
+  document.getElementById('logo-remove').style.display='none';
+}
 
 function filterCat(cat,el){
   catAtual=cat;
@@ -779,6 +831,7 @@ function salvarPedidoVendedor(info){
     criadoEm:new Date().toISOString(),
     dataEntrega:'',
     precisaPersonalizacao:info.custom,
+    logoUrl:info.logo||null,
     observacoes,
     itens,
     total
@@ -802,13 +855,14 @@ function submitPedido(){
   const msg=document.getElementById('f-msg').value;
   const obs=document.getElementById('f-obs').value.trim();
   const custom=document.getElementById('f-custom').value;
-  salvarPedidoVendedor({nome,wpp,email,tipo,custom,msg,obs,cart:[...cart]});
-  const texto=`*Novo pedido recebido pelo site*\n\n*Dados do cliente*\nNome: ${nome}\nWhatsApp: ${wpp}\nE-mail: ${email||'Não informado'}\nTipo de cliente: ${tipo}\n\nOs detalhes completos do pedido (itens, valores e observações) já estão disponíveis na plataforma.`;
+  salvarPedidoVendedor({nome,wpp,email,tipo,custom,msg,obs,cart:[...cart],logo:logoDataUrl});
+  const texto=`*Novo pedido recebido pelo site*\n\n*Dados do cliente*\nNome: ${nome}\nWhatsApp: ${wpp}\nE-mail: ${email||'Não informado'}\nTipo de cliente: ${tipo}\nLogo da loja: ${logoDataUrl?'Anexado, disponível na plataforma':'Não enviado'}\n\nOs detalhes completos do pedido (itens, valores e observações) já estão disponíveis na plataforma.`;
   const encoded=encodeURIComponent(texto);
   window.open(`https://wa.me/5511998184282?text=${encoded}`,'_blank');
   document.getElementById('success-overlay').classList.add('open');
   cart=[];
   updateCartUI();
+  removeLogo();
 }
 
 function validateEmail(){

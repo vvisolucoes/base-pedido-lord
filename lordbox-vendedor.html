@@ -167,6 +167,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);mi
   body.print-mode-termica .pc-obs { border:1px dashed #000; padding:8px }
   body.print-mode-termica .pc-sidebar { border-top:1px dashed #000 }
   body.print-mode-termica .pc-info-row { padding:4px 0; border-bottom:1px dashed #000; font-size:11px }
+  body.print-mode-termica .pc-info-row img { display:none }
 }
 .print-header{display:none;text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--wood-mid)}
 .print-header h1{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;color:var(--wood-deep)}
@@ -496,6 +497,7 @@ function buildCard(p) {
           <div class="pc-info-row"><span>E-mail</span><strong>${p.clienteEmail||'—'}</strong></div>
           <div class="pc-info-row"><span>Tipo</span><strong>${p.clienteTipo||'—'}</strong></div>
           <div class="pc-info-row"><span>Personalização</span><strong>${p.precisaPersonalizacao||'—'}</strong></div>
+          ${p.logoUrl ? `<div class="pc-info-row" style="align-items:center"><span>Logo da loja</span><img src="${p.logoUrl}" alt="Logo do cliente" style="max-width:90px;max-height:50px;border:1px solid var(--border);border-radius:6px;object-fit:contain;background:#fff"></div>` : ''}
           <div class="pc-info-row"><span>Entrega desejada</span><strong>${entrega}</strong></div>
           <div class="pc-info-row"><span>Recebido em</span><strong>${dt}</strong></div>
 
