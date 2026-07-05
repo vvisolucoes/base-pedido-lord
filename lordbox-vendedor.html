@@ -197,6 +197,62 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);mi
 .instrucoes h3{font-size:14px;font-weight:600;margin-bottom:4px}
 .instrucoes p{font-size:13px;color:var(--text-muted);line-height:1.5}
 .instrucoes code{background:var(--cream);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--wood-dark);font-family:monospace}
+
+/* ─── RESPONSIVO ────────────────────────────────────────────────────────── */
+
+/* TVs e telas grandes */
+@media (min-width:1600px){
+  .content{max-width:1600px}
+  .metrics{gap:20px}
+  .mc-left .mc-value{font-size:30px}
+  .modal{width:560px}
+}
+
+/* Tablets */
+@media (max-width:1024px){
+  .content{padding:24px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .pc-body-inner{grid-template-columns:1fr 240px}
+  .modal{width:90vw;max-width:480px}
+}
+
+/* Tablets pequenos / celulares grandes (paisagem) */
+@media (max-width:768px){
+  .topbar{padding:0 16px}
+  .topbar-logo span{display:none}
+  .content{padding:20px 16px}
+  .filters-row{flex-direction:column;align-items:stretch}
+  .filters-right{width:100%}
+  .search-bar{width:100%}
+  .tabs{width:100%;overflow-x:auto}
+  .pc-body-inner{grid-template-columns:1fr;gap:16px}
+  .pc-sidebar{border-top:1px solid var(--border);padding-top:16px}
+}
+
+/* Celulares */
+@media (max-width:600px){
+  .topbar{height:auto;min-height:56px;padding:10px 14px;flex-wrap:wrap;gap:8px}
+  .topbar-right{width:100%;flex-wrap:wrap;gap:8px}
+  .topbar-badge{font-size:12px;padding:5px 10px}
+  .btn-sm{padding:6px 10px;font-size:12px}
+  .content{padding:16px 12px}
+  .metrics{grid-template-columns:repeat(2,1fr);gap:10px}
+  .metric-card{padding:14px}
+  .mc-left .mc-value{font-size:20px}
+  .mc-icon{width:32px;height:32px;font-size:15px}
+  .instrucoes{flex-direction:column;padding:16px}
+  .tab{padding:7px 12px;font-size:12px}
+  .pc-header{flex-wrap:wrap;gap:8px;padding:14px 16px}
+  .pc-num{min-width:0}
+  .pc-client{flex:1 1 100%;order:1}
+  .pc-meta{width:100%;order:2;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .pc-date{text-align:left}
+  .pc-body-inner{padding:16px}
+  .item-row{flex-wrap:wrap}
+  .item-detail{flex-basis:100%}
+  .modal{width:94vw;max-width:none;border-radius:12px}
+  .modal-body,.modal-header,.modal-footer{padding-left:18px;padding-right:18px}
+}
 </style>
 </head>
 <body>
