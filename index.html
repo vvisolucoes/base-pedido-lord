@@ -488,14 +488,13 @@ textarea.form-input{resize:vertical;min-height:90px}
     <div class="success-icon"><i class="ti ti-check"></i></div>
     <h2>Pedido enviado!</h2>
     <p>Recebemos seu pedido e entraremos em contato em até 2 horas pelo WhatsApp para confirmar detalhes e prazo.</p>
-    <p style="font-size:13px;background:var(--cream);border-radius:4px;padding:12px 14px;margin-bottom:20px;text-align:left"><i class="ti ti-file-download" style="color:var(--wood-dark)"></i> Um PDF com o pedido completo foi baixado no seu dispositivo. Anexe esse arquivo na conversa do WhatsApp que abrimos para enviar o pedido.</p>
+    <p style="font-size:13px;background:var(--cream);border-radius:4px;padding:12px 14px;margin-bottom:20px;text-align:left"><i class="ti ti-brand-whatsapp" style="color:var(--wood-dark)"></i> Enviamos uma notificação para o vendedor. Ele vai acompanhar todos os detalhes do seu pedido diretamente na plataforma.</p>
     <button class="success-wpp" onclick="document.getElementById('success-overlay').classList.remove('open')">
       <i class="ti ti-check"></i> Fechar
     </button>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const CATALOG = [
   {id:1,nome:'Caixa Rústica',cat:'presente',icon:'ti-gift',tag:'Best-seller',img:'caixa-rustica-p.jpg',imgs:['caixa-rustica-p.jpg','https://picsum.photos/seed/lordbox2/800/533'],temAlca:true,
@@ -755,70 +754,36 @@ function goToForm(){
   document.getElementById('pedido-section').scrollIntoView({behavior:'smooth'});
 }
 
-function gerarPedidoPDF(info){
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF();
-  const margin=14;
-  let y=20;
-  const checkPage=()=>{if(y>270){doc.addPage();y=20;}};
+const PEDIDOS_STORAGE_KEY='lordbox_pedidos';
 
-  doc.setFont('helvetica','bold');doc.setFontSize(18);
-  doc.text('LordBox — Pedido',margin,y);y+=8;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  doc.text(`Data: ${new Date().toLocaleString('pt-BR')}`,margin,y);y+=10;
-
-  doc.setFont('helvetica','bold');doc.setFontSize(12);
-  doc.text('Dados do cliente',margin,y);y+=7;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  doc.text(`Nome: ${info.nome}`,margin,y);y+=6;
-  doc.text(`WhatsApp: ${info.wpp}`,margin,y);y+=6;
-  if(info.email){doc.text(`E-mail: ${info.email}`,margin,y);y+=6;}
-  doc.text(`Tipo de cliente: ${info.tipo}`,margin,y);y+=6;
-  doc.text(`Personalização: ${info.custom}`,margin,y);y+=10;
-
-  checkPage();
-  doc.setFont('helvetica','bold');doc.setFontSize(12);
-  doc.text('Itens do pedido',margin,y);y+=7;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-
-  if(info.cart.length===0){
-    doc.text('Nenhum item no carrinho.',margin,y);y+=6;
-  } else {
-    info.cart.forEach(x=>{
-      checkPage();
-      doc.text(`${x.qty}x ${x.nome}${x.tamanho?' '+x.tamanho:''} — R$ ${x.preco} x ${x.qty} = R$ ${x.preco*x.qty}`,margin,y);y+=6;
-      if(x.alca){checkPage();doc.text(`   Alça: ${x.alca==='com'?'Com alça':'Sem alça'}${x.alca==='com'&&x.alcaCor?' ('+x.alcaCor+')':''}`,margin,y);y+=6;}
-      if(x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)){
-        const dims=[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × ');
-        checkPage();doc.text(`   Medidas: ${dims}`,margin,y);y+=6;
-      }
-    });
-    const total=info.cart.reduce((a,x)=>a+x.preco*x.qty,0);
-    y+=4;checkPage();
-    doc.setFont('helvetica','bold');
-    doc.text(`Total: R$ ${total.toLocaleString('pt-BR')}`,margin,y);y+=10;
-    doc.setFont('helvetica','normal');
-  }
-
-  if(info.msg&&info.msg.trim()){
-    checkPage();
-    doc.setFont('helvetica','bold');doc.setFontSize(12);
-    doc.text('Detalhes / Mensagem',margin,y);y+=7;
-    doc.setFont('helvetica','normal');doc.setFontSize(10);
-    const msgLines=doc.splitTextToSize(info.msg.trim(),180);
-    doc.text(msgLines,margin,y);y+=msgLines.length*6+4;
-  }
-
-  if(info.obs){
-    checkPage();
-    doc.setFont('helvetica','bold');doc.setFontSize(12);
-    doc.text('Observações',margin,y);y+=7;
-    doc.setFont('helvetica','normal');doc.setFontSize(10);
-    const obsLines=doc.splitTextToSize(info.obs,180);
-    doc.text(obsLines,margin,y);
-  }
-
-  doc.save(`pedido-lordbox-${Date.now()}.pdf`);
+function salvarPedidoVendedor(info){
+  let arr=[];
+  try{arr=JSON.parse(localStorage.getItem(PEDIDOS_STORAGE_KEY))||[];}catch{arr=[];}
+  const itens=info.cart.map(x=>{
+    const partes=[];
+    if(x.alca)partes.push(x.alca==='com'?'Com alça'+(x.alcaCor?' ('+x.alcaCor+')':''):'Sem alça');
+    if(x.medidas&&(x.medidas.c||x.medidas.a||x.medidas.l)){
+      partes.push('Medidas: '+[x.medidas.c?'C:'+x.medidas.c+'cm':'',x.medidas.a?'A:'+x.medidas.a+'cm':'',x.medidas.l?'L:'+x.medidas.l+'cm':''].filter(Boolean).join(' × '));
+    }
+    return{nome:x.nome+(x.tamanho?' '+x.tamanho:''),qty:x.qty,preco:x.preco,personalizacao:partes.join(' · ')};
+  });
+  const observacoes=[info.msg&&info.msg.trim(),info.obs&&info.obs.trim()].filter(Boolean).join('\n\n');
+  const total=info.cart.reduce((a,x)=>a+x.preco*x.qty,0);
+  arr.push({
+    id:'LB'+String(Date.now()).slice(-5),
+    clienteNome:info.nome,
+    clienteWpp:info.wpp,
+    clienteEmail:info.email,
+    clienteTipo:info.tipo,
+    status:'novo',
+    criadoEm:new Date().toISOString(),
+    dataEntrega:'',
+    precisaPersonalizacao:info.custom,
+    observacoes,
+    itens,
+    total
+  });
+  localStorage.setItem(PEDIDOS_STORAGE_KEY,JSON.stringify(arr));
 }
 
 function submitPedido(){
@@ -837,9 +802,9 @@ function submitPedido(){
   const msg=document.getElementById('f-msg').value;
   const obs=document.getElementById('f-obs').value.trim();
   const custom=document.getElementById('f-custom').value;
-  const texto=`Olá! Sou ${nome} e gostaria de fazer um pedido:\n\n✍️ Personalização: ${custom}\n\nProdutos/Detalhes: ${msg||'—'}${obs?'\n\nObservações: '+obs:''}`;
+  salvarPedidoVendedor({nome,wpp,email,tipo,custom,msg,obs,cart:[...cart]});
+  const texto='Olá, acabei de fazer um pedido';
   const encoded=encodeURIComponent(texto);
-  gerarPedidoPDF({nome,wpp,email,tipo,custom,msg,obs,cart:[...cart]});
   window.open(`https://wa.me/5511998184282?text=${encoded}`,'_blank');
   document.getElementById('success-overlay').classList.add('open');
   cart=[];
