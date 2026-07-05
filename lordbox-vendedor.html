@@ -386,6 +386,10 @@ function badgeStatus(s) {
   const map = {novo:'badge-novo',producao:'badge-producao',pronto:'badge-pronto',entregue:'badge-entregue',cancelado:'badge-cancelado'};
   return `<span class="badge ${map[s]||'badge-novo'}">${labelStatus(s)}</span>`;
 }
+function logoFileName(p) {
+  const slug = (p.clienteNome||'cliente').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  return `logo-${slug||'cliente'}-${p.id}.jpg`;
+}
 
 function renderPedidos() {
   const todos = getPedidos();
@@ -497,7 +501,7 @@ function buildCard(p) {
           <div class="pc-info-row"><span>E-mail</span><strong>${p.clienteEmail||'—'}</strong></div>
           <div class="pc-info-row"><span>Tipo</span><strong>${p.clienteTipo||'—'}</strong></div>
           <div class="pc-info-row"><span>Personalização</span><strong>${p.precisaPersonalizacao||'—'}</strong></div>
-          ${p.logoUrl ? `<div class="pc-info-row" style="align-items:center"><span>Logo da loja</span><img src="${p.logoUrl}" alt="Logo do cliente" style="max-width:90px;max-height:50px;border:1px solid var(--border);border-radius:6px;object-fit:contain;background:#fff"></div>` : ''}
+          ${p.logoUrl ? `<div class="pc-info-row" style="align-items:center"><span>Logo da loja</span><a href="${p.logoUrl}" download="${logoFileName(p)}" title="Baixar logo"><img src="${p.logoUrl}" alt="Logo do cliente" style="max-width:90px;max-height:50px;border:1px solid var(--border);border-radius:6px;object-fit:contain;background:#fff"></a></div>` : ''}
           <div class="pc-info-row"><span>Entrega desejada</span><strong>${entrega}</strong></div>
           <div class="pc-info-row"><span>Recebido em</span><strong>${dt}</strong></div>
 
@@ -513,6 +517,7 @@ function buildCard(p) {
               </select>
             </div>
             ${wppLink ? `<a href="${wppLink}" target="_blank" class="btn btn-whatsapp"><i class="ti ti-brand-whatsapp"></i> Confirmar pelo WhatsApp</a>` : ''}
+            ${p.logoUrl ? `<a href="${p.logoUrl}" download="${logoFileName(p)}" class="btn btn-outline"><i class="ti ti-download"></i> Baixar logo do cliente</a>` : ''}
             <button class="btn btn-outline" onclick="imprimirPedido('${p.id}','a4')"><i class="ti ti-printer"></i> Imprimir A4</button>
             <button class="btn btn-outline" onclick="imprimirPedido('${p.id}','termica')"><i class="ti ti-receipt"></i> Imprimir Térmica</button>
             <button class="btn btn-danger btn-sm" onclick="excluirPedido('${p.id}')"><i class="ti ti-trash"></i> Excluir</button>
